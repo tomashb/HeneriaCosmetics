@@ -1,8 +1,19 @@
 settings:
-  # Titre modifié (Plus de Heneria)
   menu_title: "<!italic><#d000ff><b>GARDE-ROBE</b>"
   frame_material: PURPLE_STAINED_GLASS_PANE
-  cooldown_seconds: 3
+
+  # Item de statistiques (Nouveau)
+  stats_item:
+    slot: 4
+    material: BOOK
+    name: "<!italic><#55ff55><b>COSMÉTIQUES DÉBLOQUÉS</b>"
+    lore:
+      - "<gray>Votre collection actuelle :"
+      - ""
+      - "<gray>Progression: <green>%owned%<gray>/<green>%total% <gray>(<yellow>%percent%%<gray>)"
+      - "<gray>Continuez à jouer pour tout"
+      - "<gray>débloquer !"
+
   items:
     next_page:
       material: ARROW
@@ -11,13 +22,15 @@ settings:
       material: ARROW
       name: "<!italic><yellow>⬅ Page Précédente"
     back:
-      material: OAK_DOOR
+      # Changement demandé : ID HDB 9334 (Croix Rouge Style)
+      hdb_id: "9334"
       name: "<!italic><red>Fermer le menu"
     unequip:
       material: BARRIER
       name: "<!italic><c:#ff3333><b>Tout Retirer</b>"
       lore:
         - "<gray>Enlever tous vos cosmétiques."
+
   messages:
     cooldown: "<!italic><red>Doucement ! Attendez encore quelques secondes."
     no_perm: "<!italic><red>✖ Vous n'avez pas ce cosmétique !"
@@ -49,19 +62,21 @@ list:
     category: hats
     permission: "heneria.hat.king"
     rarity: LEGENDARY
-    hdb_id: "7256"
+    # FIX : On utilise l'item Vanilla pour être sûr que ça marche
+    material: GOLDEN_HELMET
     name: "<!italic><#ffcc00><b>COURONNE ROYALE</b>"
     lore:
       - "<gray>Le symbole du pouvoir absolu."
       - "<gray>Inclinez-vous devant le Roi."
+
   astronaut:
     category: hats
     rarity: EPIC
     hdb_id: "34646"
     name: "<!italic><aqua><b>CASQUE SPATIAL</b>"
     lore:
-      - "<gray>Pour respirer dans le vide"
-      - "<gray>du Néant."
+      - "<gray>Pour respirer dans le vide."
+
   tnt_head:
     category: hats
     rarity: COMMON
@@ -69,23 +84,23 @@ list:
     name: "<!italic><red><b>BLOC DE TNT</b>"
     lore:
       - "<gray>Attention à ne pas"
-      - "<gray>exploser de joie."
+      - "<gray>exploser."
+
   fox_mask:
     category: hats
     rarity: RARE
     hdb_id: "33932"
     name: "<!italic><#ffaa00><b>MASQUE KITSUNE</b>"
     lore:
-      - "<gray>Un masque traditionnel"
-      - "<gray>japonais mystérieux."
-  monitor:
+      - "<gray>Un masque traditionnel."
+
+  camera:
     category: hats
-    rarity: RARE
-    hdb_id: "421"
-    name: "<!italic><gray><b>ÉCRAN PC</b>"
+    rarity: COMMON
+    hdb_id: "24136"
+    name: "<!italic><#333333><b>CAMÉRA GOPRO</b>"
     lore:
-      - "<gray>Vous avez passé trop de temps"
-      - "<gray>devant l'ordinateur."
+      - "<gray>Filmez vos meilleurs moments."
 
 # === PARTICULES ===
 
@@ -99,6 +114,7 @@ list:
     lore:
       - "<gray>Brûlez d'une intensité"
       - "<gray>incroyable."
+
   heart_aura:
     category: particles
     rarity: RARE
@@ -107,8 +123,17 @@ list:
     material: RED_DYE
     name: "<!italic><red><b>CŒURS</b>"
     lore:
-      - "<gray>Répandez l'amour partout"
-      - "<gray>où vous passez."
+      - "<gray>Répandez l'amour."
+
+  rain_cloud:
+    category: particles
+    rarity: COMMON
+    type: DRIPPING_WATER
+    style: TRAIL
+    material: WATER_BUCKET
+    name: "<!italic><blue><b>PLUIE</b>"
+    lore:
+      - "<gray>Il fait gris..."
 
 # === GADGETS ===
 
@@ -119,5 +144,13 @@ list:
     item_material: FISHING_ROD
     name: "<!italic><green><b>GRAPPIN TACTIQUE</b>"
     lore:
-      - "<gray>Propulsez-vous dans les airs"
-      - "<gray>comme une araignée."
+      - "<gray>Propulsez-vous dans les airs."
+
+  paintball:
+    category: gadgets
+    rarity: RARE
+    material: DIAMOND_HORSE_ARMOR
+    item_material: DIAMOND_HORSE_ARMOR
+    name: "<!italic><aqua><b>FUSIL PAINTBALL</b>"
+    lore:
+      - "<gray>Colorez vos amis."
