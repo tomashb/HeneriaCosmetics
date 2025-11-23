@@ -198,7 +198,7 @@ public class CosmeticsGUI implements Listener {
 
         if (cosmetic.getLore() != null) {
             for (String line : cosmetic.getLore()) {
-                combinedLore.add("<!italic><gray>" + line.replace("&", "§"));
+                combinedLore.add("<!italic>" + line.replace("§", ""));
             }
         }
 

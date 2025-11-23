@@ -1,5 +1,6 @@
 settings:
-  menu_title: "<!italic><#222222><b>Heneria</b> <dark_gray>│ <#d000ff><b>Garde-Robe</b>"
+  # Titre modifié (Plus de Heneria)
+  menu_title: "<!italic><#d000ff><b>GARDE-ROBE</b>"
   frame_material: PURPLE_STAINED_GLASS_PANE
   cooldown_seconds: 3
   items:
@@ -16,7 +17,7 @@ settings:
       material: BARRIER
       name: "<!italic><c:#ff3333><b>Tout Retirer</b>"
       lore:
-        - "&7Enlever tous vos cosmétiques."
+        - "<gray>Enlever tous vos cosmétiques."
   messages:
     cooldown: "<!italic><red>Doucement ! Attendez encore quelques secondes."
     no_perm: "<!italic><red>✖ Vous n'avez pas ce cosmétique !"
@@ -42,7 +43,7 @@ categories:
 
 list:
 
-# === CHAPEAUX (Noms Majuscules & Clean) ===
+# === CHAPEAUX ===
 
   crown_king:
     category: hats
@@ -51,58 +52,42 @@ list:
     hdb_id: "7256"
     name: "<!italic><#ffcc00><b>COURONNE ROYALE</b>"
     lore:
-      - "&7Le symbole du pouvoir absolu."
-      - "&7Inclinez-vous devant le Roi."
+      - "<gray>Le symbole du pouvoir absolu."
+      - "<gray>Inclinez-vous devant le Roi."
   astronaut:
     category: hats
     rarity: EPIC
     hdb_id: "34646"
     name: "<!italic><aqua><b>CASQUE SPATIAL</b>"
     lore:
-      - "&7Pour respirer dans le vide"
-      - "&7du Néant."
+      - "<gray>Pour respirer dans le vide"
+      - "<gray>du Néant."
   tnt_head:
     category: hats
     rarity: COMMON
     material: TNT
     name: "<!italic><red><b>BLOC DE TNT</b>"
     lore:
-      - "&7Attention à ne pas"
-      - "&7exploser de joie."
+      - "<gray>Attention à ne pas"
+      - "<gray>exploser de joie."
   fox_mask:
     category: hats
     rarity: RARE
     hdb_id: "33932"
     name: "<!italic><#ffaa00><b>MASQUE KITSUNE</b>"
     lore:
-      - "&7Un masque traditionnel"
-      - "&7japonais mystérieux."
+      - "<gray>Un masque traditionnel"
+      - "<gray>japonais mystérieux."
   monitor:
     category: hats
     rarity: RARE
     hdb_id: "421"
     name: "<!italic><gray><b>ÉCRAN PC</b>"
     lore:
-      - "&7Vous avez passé trop de temps"
-      - "&7devant l'ordinateur."
-  camera:
-    category: hats
-    rarity: COMMON
-    hdb_id: "24136"
-    name: "<!italic><#333333><b>CAMÉRA GOPRO</b>"
-    lore:
-      - "&7Filmez vos meilleurs moments"
-      - "&7en POV."
-  rubiks:
-    category: hats
-    rarity: EPIC
-    hdb_id: "282"
-    name: "<!italic><#ff00aa><b>RUBIK'S CUBE</b>"
-    lore:
-      - "&7Personne n'a jamais réussi"
-      - "&7à le résoudre."
+      - "<gray>Vous avez passé trop de temps"
+      - "<gray>devant l'ordinateur."
 
-# === PARTICULES (Noms Courts & Efficaces) ===
+# === PARTICULES ===
 
   flame_aura:
     category: particles
@@ -112,8 +97,8 @@ list:
     material: BLAZE_POWDER
     name: "<!italic><gold><b>AURA DE FEU</b>"
     lore:
-      - "&7Brûlez d'une intensité"
-      - "&7incroyable."
+      - "<gray>Brûlez d'une intensité"
+      - "<gray>incroyable."
   heart_aura:
     category: particles
     rarity: RARE
@@ -122,28 +107,8 @@ list:
     material: RED_DYE
     name: "<!italic><red><b>CŒURS</b>"
     lore:
-      - "&7Répandez l'amour partout"
-      - "&7où vous passez."
-  music_notes:
-    category: particles
-    rarity: RARE
-    type: NOTE
-    style: TRAIL
-    material: NOTE_BLOCK
-    name: "<!italic><aqua><b>MUSIQUE</b>"
-    lore:
-      - "&7Une mélodie visuelle"
-      - "&7qui vous suit."
-  rain_cloud:
-    category: particles
-    rarity: COMMON
-    type: DRIPPING_WATER
-    style: TRAIL
-    material: WATER_BUCKET
-    name: "<!italic><blue><b>PLUIE</b>"
-    lore:
-      - "&7Il fait toujours gris"
-      - "&7au dessus de vous."
+      - "<gray>Répandez l'amour partout"
+      - "<gray>où vous passez."
 
 # === GADGETS ===
 
@@ -154,14 +119,5 @@ list:
     item_material: FISHING_ROD
     name: "<!italic><green><b>GRAPPIN TACTIQUE</b>"
     lore:
-      - "&7Propulsez-vous dans les airs"
-      - "&7comme une araignée."
-  paintball:
-    category: gadgets
-    rarity: RARE
-    material: DIAMOND_HORSE_ARMOR
-    item_material: DIAMOND_HORSE_ARMOR
-    name: "<!italic><aqua><b>FUSIL PAINTBALL</b>"
-    lore:
-      - "&7Colorez vos amis avec"
-      - "&7de la neige."
+      - "<gray>Propulsez-vous dans les airs"
+      - "<gray>comme une araignée."
