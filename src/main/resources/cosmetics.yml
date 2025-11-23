@@ -1,0 +1,31 @@
+messages:
+  prefix: "<gradient:#d000ff:#ff00aa><b>HeneriaCosmetics</b></gradient> <dark_gray>» "
+  equipped: "<green>Vous avez équipé : <white>%cosmetic%"
+  unequipped: "<red>Cosmétiques retirés."
+  no_permission: "<red>Vous n'avez pas le grade pour ça !"
+
+particles:
+  flame_aura:
+    name: "&6Aura de Feu"
+    permission: "heneria.cosmetics.flame"
+    icon: BLAZE_POWDER
+    particle_type: FLAME
+    count: 2
+  heart_trail:
+    name: "&cCœurs d'Amour"
+    permission: "heneria.cosmetics.heart"
+    icon: POPPY
+    particle_type: HEART
+    count: 1
+
+hats:
+  astronaut:
+    name: "&bAstronaute"
+    permission: "heneria.hats.astro"
+    hdb_id: "34646"
+    lore:
+      - "&7Vers l'infini..."
+  tnt_head:
+    name: "&cTNT"
+    permission: "heneria.hats.tnt"
+    material: TNT
