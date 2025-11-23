@@ -161,16 +161,32 @@ public class CosmeticManager {
 
         active.setCurrentHatId(hatId);
 
-        ItemStack itemToWear;
-        if (hdbApi != null) {
-            itemToWear = hdbApi.getItemHead(hat.getHdbId());
-        } else {
-             itemToWear = new ItemStack(Material.PLAYER_HEAD);
+        ItemStack itemToWear = null;
+
+        // 1. Priority to HeadDatabase if ID is defined
+        if (hdbApi != null && hat.getHdbId() != null && !hat.getHdbId().isEmpty()) {
+            try {
+                itemToWear = hdbApi.getItemHead(hat.getHdbId());
+            } catch (Exception e) {
+                // Fallback if ID is invalid or API fails
+            }
         }
 
+        // 2. Else use Vanilla Material
+        if (itemToWear == null && hat.getIconMaterial() != null) {
+            itemToWear = new ItemStack(hat.getIconMaterial());
+        }
+
+        // 3. Ultimate Fallback
         if (itemToWear == null) {
-            player.sendMessage(MiniMessage.miniMessage().deserialize(cosmeticConfig.getString("settings.messages.error_loading", "<red>Erreur de chargement.")));
-            return;
+            itemToWear = new ItemStack(Material.BARRIER);
+        }
+
+        if (itemToWear.getType() == Material.BARRIER && hat.getIconMaterial() == null && (hat.getHdbId() == null || hat.getHdbId().isEmpty())) {
+             // If it's barrier because we failed to load, maybe we should warn.
+             // But if it's just missing config, barrier is fine?
+             // The prompt logic ends with "if (item == null) item = new ItemStack(Material.BARRIER);"
+             // I've ensured it is not null.
         }
 
         ItemMeta meta = itemToWear.getItemMeta();

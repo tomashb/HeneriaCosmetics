@@ -256,14 +256,25 @@ public class CosmeticsGUI implements Listener {
     }
 
     private ItemStack createHeadItem(String hdbId, Material material, String name, List<String> lore) {
-        ItemStack item;
-        if (material != null) {
+        ItemStack item = null;
+
+        // 1. Priority to HeadDatabase if ID is defined
+        if (hdbApi != null && hdbId != null && !hdbId.isEmpty()) {
+            try {
+                item = hdbApi.getItemHead(hdbId);
+            } catch (Exception e) {
+                // Fallback
+            }
+        }
+
+        // 2. Else use Vanilla Material
+        if (item == null && material != null) {
             item = new ItemStack(material);
-        } else if (hdbApi != null && hdbId != null) {
-            item = hdbApi.getItemHead(hdbId);
-            if (item == null) item = new ItemStack(Material.PLAYER_HEAD); // Fallback
-        } else {
-            item = new ItemStack(Material.PLAYER_HEAD);
+        }
+
+        // 3. Ultimate Fallback
+        if (item == null) {
+            item = new ItemStack(Material.BARRIER);
         }
 
         ItemMeta meta = item.getItemMeta();
