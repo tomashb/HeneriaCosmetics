@@ -153,6 +153,11 @@ public class CosmeticManager {
              itemToWear = new ItemStack(Material.PLAYER_HEAD);
         }
 
+        if (itemToWear == null) {
+            player.sendMessage(MiniMessage.miniMessage().deserialize(cosmeticConfig.getString("settings.messages.error_loading", "<red>Erreur de chargement.")));
+            return;
+        }
+
         ItemMeta meta = itemToWear.getItemMeta();
         meta.displayName(MiniMessage.miniMessage().deserialize(hat.getName())); // Use MiniMessage directly as per prompt
         meta.getPersistentDataContainer().set(new org.bukkit.NamespacedKey(plugin, "cosmetic_hat"), org.bukkit.persistence.PersistentDataType.STRING, hatId);
@@ -186,6 +191,8 @@ public class CosmeticManager {
         ItemMeta meta = item.getItemMeta();
         meta.displayName(MiniMessage.miniMessage().deserialize(gadget.getName()));
         meta.getPersistentDataContainer().set(new org.bukkit.NamespacedKey(plugin, "cosmetic_gadget"), org.bukkit.persistence.PersistentDataType.STRING, gadgetId);
+        meta.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_ATTRIBUTES, org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);
+        meta.setUnbreakable(true);
         item.setItemMeta(meta);
 
         player.getInventory().addItem(item);

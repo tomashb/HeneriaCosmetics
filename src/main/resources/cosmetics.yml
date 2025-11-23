@@ -1,98 +1,287 @@
 settings:
-  menu_title: "<!italic><#d000ff><b>GARDE-ROBE</b>"
+  menu_title: "<!italic><#d000ff><b>GARDE-ROBE SUPRÊME</b>"
   frame_material: PURPLE_STAINED_GLASS_PANE
   back_item:
-    hdb_id: "9222" # Flèche rouge/gauche
+    hdb_id: "9222"
     name: "<!italic><red><b>Retour</b>"
   unequip_item:
-    hdb_id: "9382" # Croix rouge/Barrier
+    hdb_id: "9382"
     name: "<!italic><c:#ff5555><b>Tout retirer</b>"
   messages:
     prefix: "<gradient:#d000ff:#ff00aa><b>HeneriaCosmetics</b></gradient> <dark_gray>» "
     equipped: "<green>Vous avez équipé : <white>%cosmetic%"
     unequipped: "<red>Cosmétiques retirés."
     no_permission: "<red>Vous n'avez pas le grade pour ça !"
+    error_loading: "<red>Erreur de chargement du cosmétique. Réessayez."
 
 categories:
   hats:
     slot: 20
-    hdb_id: "34646" # Casque astronaute
+    hdb_id: "34646"
     name: "<!italic><gradient:#00aaff:#0044ff><b>CHAPEAUX</b></gradient>"
     lore:
       - "<!italic><gray>Décorez votre tête avec style."
-      - ""
-      - "<!italic><yellow>▶ Clique pour ouvrir"
   particles:
     slot: 22
-    hdb_id: "9450" # Boule de feu/Magma
+    hdb_id: "9450"
     name: "<!italic><gradient:#ffaa00:#ff4400><b>AURA & PARTICULES</b></gradient>"
     lore:
       - "<!italic><gray>Laissez une trace derrière vous."
-      - ""
-      - "<!italic><yellow>▶ Clique pour ouvrir"
   gadgets:
     slot: 24
-    hdb_id: "25299" # Coffre/Slime fun
-    name: "<!italic><gradient:#00ffaa:#00aa44><b>GADGETS</b></gradient>"
+    hdb_id: "25299"
+    name: "<!italic><gradient:#00ffaa:#00aa44><b>GADGETS FUN</b></gradient>"
     lore:
       - "<!italic><gray>Jouets et outils funs."
-      - ""
-      - "<!italic><yellow>▶ Clique pour ouvrir"
 
 list:
 
-  # --- CHAPEAUX ---
+# ================= CHAPEAUX (20+) =================
 
   crown_gold:
     category: hats
-    permission: "heneria.cosmetics.crown"
-    hdb_id: "7256" # Couronne Or
+    permission: "heneria.hat.crown"
+    hdb_id: "7256"
     name: "<!italic><#ffcc00><b>Couronne Royale</b>"
-    lore:
-      - "<!italic><gray>Pour les rois du PvP."
-  astronaut_helmet:
+  crown_diamond:
     category: hats
-    permission: "heneria.cosmetics.astro"
+    permission: "heneria.hat.diamond"
+    hdb_id: "256"
+    name: "<!italic><aqua><b>Couronne Diamant</b>"
+  astronaut:
+    category: hats
+    permission: "heneria.hat.astro"
     hdb_id: "34646"
-    name: "<!italic><#aaffff><b>Casque Spatial</b>"
-    lore:
-      - "<!italic><gray>Vers l'infini et au-delà !"
+    name: "<!italic><#aaffff><b>Astronaute</b>"
+  diver:
+    category: hats
+    hdb_id: "30262"
+    name: "<!italic><aqua><b>Scaphandrier</b>"
   tv_head:
     category: hats
-    permission: "heneria.cosmetics.tv"
-    hdb_id: "23628" # Tête TV/Moniteur
-    name: "<!italic><#aaaaaa><b>Tête de TV</b>"
-    lore:
-      - "<!italic><gray>Pas de signal..."
+    hdb_id: "23628"
+    name: "<!italic><gray><b>TV Head</b>"
+  camera_head:
+    category: hats
+    hdb_id: "24136"
+    name: "<!italic><gray><b>Caméra</b>"
+  deadpool:
+    category: hats
+    hdb_id: "442"
+    name: "<!italic><red><b>Deadpool</b>"
+  batman:
+    category: hats
+    hdb_id: "439"
+    name: "<!italic><dark_gray><b>Chevalier Noir</b>"
+  pikachu:
+    category: hats
+    hdb_id: "255"
+    name: "<!italic><yellow><b>Pikachu</b>"
+  shrek:
+    category: hats
+    hdb_id: "260"
+    name: "<!italic><green><b>Ogre</b>"
+  burger:
+    category: hats
+    hdb_id: "408"
+    name: "<!italic><gold><b>Burger</b>"
+  taco:
+    category: hats
+    hdb_id: "409"
+    name: "<!italic><gold><b>Taco</b>"
+  rubiks_cube:
+    category: hats
+    hdb_id: "282"
+    name: "<!italic><#ff00aa><b>Rubik's Cube</b>"
+  earth:
+    category: hats
+    hdb_id: "45678"
+    name: "<!italic><green><b>Terre</b>"
+  sun:
+    category: hats
+    hdb_id: "45679"
+    name: "<!italic><yellow><b>Soleil</b>"
+  moon:
+    category: hats
+    hdb_id: "45680"
+    name: "<!italic><gray><b>Lune</b>"
+  pumpkin_scary:
+    category: hats
+    hdb_id: "45681"
+    name: "<!italic><gold><b>Citrouille</b>"
+  snowman:
+    category: hats
+    hdb_id: "45682"
+    name: "<!italic><white><b>Bonhomme de Neige</b>"
+  present_red:
+    category: hats
+    hdb_id: "45683"
+    name: "<!italic><red><b>Cadeau</b>"
+  chicken_head:
+    category: hats
+    hdb_id: "45684"
+    name: "<!italic><white><b>Poulet</b>"
 
-  # --- PARTICULES ---
+# ================= PARTICULES (20+) =================
 
   flame_ring:
     category: particles
-    permission: "heneria.cosmetics.flame"
     type: FLAME
-    style: RING # Style d'animation (Cercle)
+    style: RING
+    permission: "heneria.part.flame"
     hdb_id: "9450"
-    name: "<!italic><#ff5500><b>Cercle de Feu</b>"
-    lore:
-      - "<!italic><gray>Une aura brûlante."
-  love_trail:
+    name: "<!italic><gold><b>Cercle de Feu</b>"
+  heart_trail:
     category: particles
-    permission: "heneria.cosmetics.heart"
     type: HEART
     style: TRAIL
-    hdb_id: "9366" # Cœur rouge
-    name: "<!italic><#ff55aa><b>Pluie de Cœurs</b>"
-    lore:
-      - "<!italic><gray>Répandez l'amour."
+    permission: "heneria.part.heart"
+    hdb_id: "9366"
+    name: "<!italic><red><b>Cœurs</b>"
+  music_notes:
+    category: particles
+    type: NOTE
+    style: TRAIL
+    hdb_id: "9367"
+    name: "<!italic><aqua><b>Musique</b>"
+  villager_happy:
+    category: particles
+    type: HAPPY_VILLAGER
+    style: TRAIL
+    hdb_id: "9368"
+    name: "<!italic><green><b>Émeraudes</b>"
+  soul_fire:
+    category: particles
+    type: SOUL_FIRE_FLAME
+    style: TRAIL
+    hdb_id: "9369"
+    name: "<!italic><blue><b>Âmes Bleues</b>"
+  clouds:
+    category: particles
+    type: CLOUD
+    style: TRAIL
+    hdb_id: "9370"
+    name: "<!italic><white><b>Nuages</b>"
+  smoke_large:
+    category: particles
+    type: LARGE_SMOKE
+    style: TRAIL
+    hdb_id: "9371"
+    name: "<!italic><gray><b>Fumée Noir</b>"
+  lava_pop:
+    category: particles
+    type: LAVA
+    style: TRAIL
+    hdb_id: "9372"
+    name: "<!italic><gold><b>Lave</b>"
+  water_drip:
+    category: particles
+    type: DRIPPING_WATER
+    style: TRAIL
+    hdb_id: "9373"
+    name: "<!italic><blue><b>Pluie</b>"
+  magic_crit:
+    category: particles
+    type: CRIT
+    style: TRAIL
+    hdb_id: "9374"
+    name: "<!italic><gold><b>Critique</b>"
+  enchant_glyph:
+    category: particles
+    type: ENCHANT
+    style: TRAIL
+    hdb_id: "9375"
+    name: "<!italic><#aa00ff><b>Sorcier</b>"
+  totem_pop:
+    category: particles
+    type: TOTEM_OF_UNDYING
+    style: TRAIL
+    hdb_id: "9376"
+    name: "<!italic><green><b>Totem</b>"
+  spit:
+    category: particles
+    type: SPIT
+    style: TRAIL
+    hdb_id: "9377"
+    name: "<!italic><white><b>Lama</b>"
+  squid_ink:
+    category: particles
+    type: SQUID_INK
+    style: TRAIL
+    hdb_id: "9378"
+    name: "<!italic><black><b>Encre</b>"
+  bubble_pop:
+    category: particles
+    type: BUBBLE
+    style: TRAIL
+    hdb_id: "9379"
+    name: "<!italic><aqua><b>Bulles</b>"
+  end_rod:
+    category: particles
+    type: END_ROD
+    style: TRAIL
+    hdb_id: "9380"
+    name: "<!italic><white><b>Magie Blanche</b>"
+  dragon_breath:
+    category: particles
+    type: DRAGON_BREATH
+    style: TRAIL
+    hdb_id: "9381"
+    name: "<!italic><#d000ff><b>Souffle Dragon</b>"
+  electric_spark:
+    category: particles
+    type: ELECTRIC_SPARK
+    style: TRAIL
+    hdb_id: "9382"
+    name: "<!italic><yellow><b>Électricité</b>"
+  wax_on:
+    category: particles
+    type: WAX_ON
+    style: TRAIL
+    hdb_id: "9383"
+    name: "<!italic><gold><b>Étoiles</b>"
+  snowflake:
+    category: particles
+    type: SNOWFLAKE
+    style: TRAIL
+    hdb_id: "9384"
+    name: "<!italic><white><b>Flocons</b>"
 
-  # --- GADGETS ---
+# ================= GADGETS (Fonctionnels) =================
 
   grappling_hook:
     category: gadgets
-    permission: "heneria.cosmetics.grapple"
+    permission: "heneria.gadget.hook"
     hdb_id: "25299"
-    name: "<!italic><#00ffaa><b>Grappin</b>"
-    lore:
-      - "<!italic><gray>Volez comme une araignée."
     item_material: FISHING_ROD
+    name: "<!italic><green><b>Grappin</b>"
+    lore:
+      - "<gray>Clic Droit pour s'envoler !"
+  paintball_gun:
+    category: gadgets
+    permission: "heneria.gadget.paint"
+    item_material: DIAMOND_HORSE_ARMOR
+    hdb_id: "9385"
+    name: "<!italic><aqua><b>Paintball</b>"
+    lore:
+      - "<gray>Piou Piou !"
+  firework_launcher:
+    category: gadgets
+    permission: "heneria.gadget.fw"
+    item_material: FIREWORK_ROCKET
+    hdb_id: "9386"
+    name: "<!italic><red><b>Lance-Feu</b>"
+  tnt_toss:
+    category: gadgets
+    permission: "heneria.gadget.tnt"
+    item_material: TNT
+    hdb_id: "9387"
+    name: "<!italic><#ff0000><b>TNT Party</b>"
+    lore:
+      - "<gray>Attention ça explose (faux dégâts)"
+  magic_wand:
+    category: gadgets
+    permission: "heneria.gadget.wand"
+    item_material: BLAZE_ROD
+    hdb_id: "9388"
+    name: "<!italic><#ffff55><b>Baguette Magique</b>"
