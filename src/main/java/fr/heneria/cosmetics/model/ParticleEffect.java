@@ -1,5 +1,6 @@
 package fr.heneria.cosmetics.model;
 
+import org.bukkit.Material;
 import org.bukkit.Particle;
 import java.util.List;
 
@@ -12,8 +13,8 @@ public class ParticleEffect extends Cosmetic {
     private final Particle particleType;
     private final Style style;
 
-    public ParticleEffect(String id, String name, String permission, String hdbId, List<String> lore, Particle particleType, Style style) {
-        super(id, name, permission, hdbId, lore, "particles");
+    public ParticleEffect(String id, String name, String permission, String hdbId, Material iconMaterial, List<String> lore, Particle particleType, Style style) {
+        super(id, name, permission, hdbId, iconMaterial, lore, "particles");
         this.particleType = particleType;
         this.style = style;
     }

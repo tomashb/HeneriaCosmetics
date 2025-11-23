@@ -57,17 +57,24 @@ public class CosmeticManager {
                 String name = section.getString("name");
                 String permission = section.getString("permission");
                 String hdbId = section.getString("hdb_id");
+                String materialName = section.getString("material");
+                Material iconMaterial = materialName != null ? Material.matchMaterial(materialName) : null;
                 List<String> lore = section.getStringList("lore");
 
                 if ("hats".equalsIgnoreCase(category)) {
-                    cosmetics.put(key, new Hat(key, name, permission, hdbId, lore));
+                    cosmetics.put(key, new Hat(key, name, permission, hdbId, iconMaterial, lore));
                 } else if ("particles".equalsIgnoreCase(category)) {
-                    Particle particleType = Particle.valueOf(section.getString("type"));
-                    ParticleEffect.Style style = ParticleEffect.Style.valueOf(section.getString("style"));
-                    cosmetics.put(key, new ParticleEffect(key, name, permission, hdbId, lore, particleType, style));
+                    try {
+                        Particle particleType = Particle.valueOf(section.getString("type"));
+                        String styleStr = section.getString("style", "TRAIL");
+                        ParticleEffect.Style style = ParticleEffect.Style.valueOf(styleStr);
+                        cosmetics.put(key, new ParticleEffect(key, name, permission, hdbId, iconMaterial, lore, particleType, style));
+                    } catch (IllegalArgumentException e) {
+                        plugin.getLogger().warning("Invalid particle type or style for " + key + ": " + e.getMessage());
+                    }
                 } else if ("gadgets".equalsIgnoreCase(category)) {
                     Material mat = Material.getMaterial(section.getString("item_material", "FISHING_ROD"));
-                    cosmetics.put(key, new Gadget(key, name, permission, hdbId, lore, mat));
+                    cosmetics.put(key, new Gadget(key, name, permission, hdbId, iconMaterial, lore, mat));
                 }
             }
         }

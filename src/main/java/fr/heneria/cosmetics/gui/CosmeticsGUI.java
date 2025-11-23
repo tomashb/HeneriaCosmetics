@@ -51,7 +51,7 @@ public class CosmeticsGUI implements Listener {
                 String name = sec.getString("name");
                 List<String> lore = sec.getStringList("lore");
 
-                ItemStack icon = createHeadItem(hdbId, name, lore);
+                ItemStack icon = createHeadItem(hdbId, null, name, lore);
                 // Add hidden PDC to identify category? Or just use slot map in listener.
                 // Using slot logic is simpler for main menu.
                 inv.setItem(slot, icon);
@@ -61,7 +61,7 @@ public class CosmeticsGUI implements Listener {
         // Tout retirer item
         ConfigurationSection unequipSec = manager.getCosmeticConfig().getConfigurationSection("settings.unequip_item");
         if (unequipSec != null) {
-            ItemStack item = createHeadItem(unequipSec.getString("hdb_id"), unequipSec.getString("name"), null);
+            ItemStack item = createHeadItem(unequipSec.getString("hdb_id"), null, unequipSec.getString("name"), null);
             inv.setItem(49, item);
         }
 
@@ -76,7 +76,7 @@ public class CosmeticsGUI implements Listener {
         // Back button
         ConfigurationSection backSec = manager.getCosmeticConfig().getConfigurationSection("settings.back_item");
         if (backSec != null) {
-            ItemStack item = createHeadItem(backSec.getString("hdb_id"), backSec.getString("name"), null);
+            ItemStack item = createHeadItem(backSec.getString("hdb_id"), null, backSec.getString("name"), null);
             inv.setItem(49, item);
         }
 
@@ -88,7 +88,7 @@ public class CosmeticsGUI implements Listener {
             if (!cosmetic.getCategory().equalsIgnoreCase(category)) continue;
             if (index >= slots.length) break;
 
-            ItemStack icon = createHeadItem(cosmetic.getHdbId(), cosmetic.getName(), cosmetic.getLore());
+            ItemStack icon = createIcon(cosmetic);
 
             // Permission check logic in lore or visual?
             // Prompt says: "Assure-toi que si on clique sur un cosmétique sans avoir la permission, ça envoie un message d'erreur propre."
@@ -146,9 +146,15 @@ public class CosmeticsGUI implements Listener {
         return s == 0 || s == 1 || s == 7 || s == 8 || s == 9 || s == 17 || s == 36 || s == 44 || s == 45 || s == 46 || s == 52 || s == 53;
     }
 
-    private ItemStack createHeadItem(String hdbId, String name, List<String> lore) {
+    private ItemStack createIcon(Cosmetic cosmetic) {
+        return createHeadItem(cosmetic.getHdbId(), cosmetic.getIconMaterial(), cosmetic.getName(), cosmetic.getLore());
+    }
+
+    private ItemStack createHeadItem(String hdbId, Material material, String name, List<String> lore) {
         ItemStack item;
-        if (hdbApi != null && hdbId != null) {
+        if (material != null) {
+            item = new ItemStack(material);
+        } else if (hdbApi != null && hdbId != null) {
             item = hdbApi.getItemHead(hdbId);
             if (item == null) item = new ItemStack(Material.PLAYER_HEAD); // Fallback
         } else {
@@ -275,7 +281,8 @@ public class CosmeticsGUI implements Listener {
             String id = clicked.getItemMeta().getPersistentDataContainer().get(new org.bukkit.NamespacedKey(plugin, "cosmetic_id"), org.bukkit.persistence.PersistentDataType.STRING);
             Cosmetic cosmetic = manager.getCosmetics().get(id);
             if (cosmetic != null) {
-                if (player.hasPermission(cosmetic.getPermission())) {
+                String perm = cosmetic.getPermission();
+                if (perm == null || perm.isEmpty() || player.hasPermission(perm)) {
                     manager.equipCosmetic(player, id);
                     player.closeInventory();
                 } else {
