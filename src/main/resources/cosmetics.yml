@@ -1,24 +1,29 @@
 settings:
-  menu_title: "<!italic><#d000ff><b>GARDE-ROBE</b>"
+  menu_title: "<!italic><#222222><b>Heneria</b> <dark_gray>│ <#d000ff><b>Garde-Robe</b>"
   frame_material: PURPLE_STAINED_GLASS_PANE
   cooldown_seconds: 3
   items:
     next_page:
       material: ARROW
-      name: "<!italic><green>Page Suivante »"
+      name: "<!italic><green>Page Suivante ➔"
     prev_page:
       material: ARROW
-      name: "<!italic><yellow>« Page Précédente"
+      name: "<!italic><yellow>⬅ Page Précédente"
     back:
       material: OAK_DOOR
-      name: "<!italic><red>Retour au Menu"
+      name: "<!italic><red>Fermer le menu"
+    unequip:
+      material: BARRIER
+      name: "<!italic><c:#ff3333><b>Tout Retirer</b>"
+      lore:
+        - "&7Enlever tous vos cosmétiques."
   messages:
     cooldown: "<!italic><red>Doucement ! Attendez encore quelques secondes."
     no_perm: "<!italic><red>✖ Vous n'avez pas ce cosmétique !"
     prefix: "<gradient:#d000ff:#ff00aa><b>HeneriaCosmetics</b></gradient> <dark_gray>» "
-    equipped: "<green>Vous avez équipé : <white>%cosmetic%"
-    unequipped: "<red>Cosmétiques retirés."
-    no_permission: "<red>Vous n'avez pas le grade pour ça !"
+    equipped: "<gradient:#55ff55:#00aa00>✔ Vous portez maintenant : <name></gradient>"
+    unequipped: "<red>✖ Vous êtes tout nu ! (Cosmétiques retirés)"
+    no_permission: "<red>🔒 Ce cosmétique est réservé au grade supérieur."
     error_loading: "<red>Erreur de chargement du cosmétique. Réessayez."
 
 categories:
@@ -37,134 +42,126 @@ categories:
 
 list:
 
-# === CHAPEAUX (Layout: 19-25, 28-34) ===
+# === CHAPEAUX (Noms Majuscules & Clean) ===
 
-  tnt_head:
-    category: hats
-    permission: "heneria.hat.tnt"
-    rarity: COMMUN
-    material: TNT # Item Vanilla (Sûr à 100%)
-    name: "<!italic><red><b>Chapeau TNT</b>"
-  pumpkin_mask:
-    category: hats
-    permission: "heneria.hat.pumpkin"
-    rarity: COMMUN
-    material: CARVED_PUMPKIN
-    name: "<!italic><gold><b>Citrouille</b>"
-  skeleton_skull:
-    category: hats
-    rarity: RARE
-    material: SKELETON_SKULL
-    name: "<!italic><gray><b>Crâne</b>"
-  astronaut:
-    category: hats
-    rarity: LEGENDAIRE
-    hdb_id: "34646" # ID HDB fiable
-    name: "<!italic><aqua><b>Astronaute</b>"
-  monitor:
-    category: hats
-    rarity: EPIQUE
-    hdb_id: "421"
-    name: "<!italic><gray><b>Moniteur TV</b>"
-  camera:
-    category: hats
-    rarity: RARE
-    hdb_id: "24136"
-    name: "<!italic><#555555><b>Caméra</b>"
   crown_king:
     category: hats
-    rarity: LEGENDAIRE
+    permission: "heneria.hat.king"
+    rarity: LEGENDARY
     hdb_id: "7256"
-    name: "<!italic><gold><b>Couronne Royale</b>"
-  rubiks:
+    name: "<!italic><#ffcc00><b>COURONNE ROYALE</b>"
+    lore:
+      - "&7Le symbole du pouvoir absolu."
+      - "&7Inclinez-vous devant le Roi."
+  astronaut:
+    category: hats
+    rarity: EPIC
+    hdb_id: "34646"
+    name: "<!italic><aqua><b>CASQUE SPATIAL</b>"
+    lore:
+      - "&7Pour respirer dans le vide"
+      - "&7du Néant."
+  tnt_head:
+    category: hats
+    rarity: COMMON
+    material: TNT
+    name: "<!italic><red><b>BLOC DE TNT</b>"
+    lore:
+      - "&7Attention à ne pas"
+      - "&7exploser de joie."
+  fox_mask:
     category: hats
     rarity: RARE
+    hdb_id: "33932"
+    name: "<!italic><#ffaa00><b>MASQUE KITSUNE</b>"
+    lore:
+      - "&7Un masque traditionnel"
+      - "&7japonais mystérieux."
+  monitor:
+    category: hats
+    rarity: RARE
+    hdb_id: "421"
+    name: "<!italic><gray><b>ÉCRAN PC</b>"
+    lore:
+      - "&7Vous avez passé trop de temps"
+      - "&7devant l'ordinateur."
+  camera:
+    category: hats
+    rarity: COMMON
+    hdb_id: "24136"
+    name: "<!italic><#333333><b>CAMÉRA GOPRO</b>"
+    lore:
+      - "&7Filmez vos meilleurs moments"
+      - "&7en POV."
+  rubiks:
+    category: hats
+    rarity: EPIC
     hdb_id: "282"
-    name: "<!italic><#ff00aa><b>Rubik's Cube</b>"
-  scaphandre:
-    category: hats
-    rarity: EPIQUE
-    hdb_id: "30262"
-    name: "<!italic><aqua><b>Scaphandrier</b>"
+    name: "<!italic><#ff00aa><b>RUBIK'S CUBE</b>"
+    lore:
+      - "&7Personne n'a jamais réussi"
+      - "&7à le résoudre."
 
-  # Duplicates for Pagination Test
-  hat_1:
-    category: hats
-    rarity: COMMUN
-    material: STONE
-    name: "<!italic><gray>Hat 1"
-  hat_2:
-    category: hats
-    rarity: COMMUN
-    material: DIRT
-    name: "<!italic><gray>Hat 2"
-  hat_3:
-    category: hats
-    rarity: COMMUN
-    material: GRASS_BLOCK
-    name: "<!italic><gray>Hat 3"
-  hat_4:
-    category: hats
-    rarity: COMMUN
-    material: COBBLESTONE
-    name: "<!italic><gray>Hat 4"
-  hat_5:
-    category: hats
-    rarity: COMMUN
-    material: SAND
-    name: "<!italic><gray>Hat 5"
-  hat_6:
-    category: hats
-    rarity: COMMUN
-    material: GRAVEL
-    name: "<!italic><gray>Hat 6"
-
-# === PARTICULES ===
+# === PARTICULES (Noms Courts & Efficaces) ===
 
   flame_aura:
     category: particles
-    rarity: EPIQUE
+    rarity: LEGENDARY
     type: FLAME
     style: RING
     material: BLAZE_POWDER
-    name: "<!italic><gold><b>Aura de Feu</b>"
+    name: "<!italic><gold><b>AURA DE FEU</b>"
+    lore:
+      - "&7Brûlez d'une intensité"
+      - "&7incroyable."
   heart_aura:
     category: particles
     rarity: RARE
     type: HEART
     style: RING
     material: RED_DYE
-    name: "<!italic><red><b>Cœurs</b>"
-  water_drip:
-    category: particles
-    rarity: COMMUN
-    type: DRIPPING_WATER
-    style: TRAIL
-    material: WATER_BUCKET
-    name: "<!italic><blue><b>Pluie</b>"
-  notes:
+    name: "<!italic><red><b>CŒURS</b>"
+    lore:
+      - "&7Répandez l'amour partout"
+      - "&7où vous passez."
+  music_notes:
     category: particles
     rarity: RARE
     type: NOTE
     style: TRAIL
     material: NOTE_BLOCK
-    name: "<!italic><aqua><b>Musique</b>"
+    name: "<!italic><aqua><b>MUSIQUE</b>"
+    lore:
+      - "&7Une mélodie visuelle"
+      - "&7qui vous suit."
+  rain_cloud:
+    category: particles
+    rarity: COMMON
+    type: DRIPPING_WATER
+    style: TRAIL
+    material: WATER_BUCKET
+    name: "<!italic><blue><b>PLUIE</b>"
+    lore:
+      - "&7Il fait toujours gris"
+      - "&7au dessus de vous."
 
 # === GADGETS ===
 
-  grappling_hook:
+  grappling:
     category: gadgets
-    rarity: RARE
+    rarity: EPIC
     material: CROSSBOW
     item_material: FISHING_ROD
-    name: "<!italic><green><b>Grappin Tactique</b>"
+    name: "<!italic><green><b>GRAPPIN TACTIQUE</b>"
     lore:
-      - "<gray>Clic droit pour s'envoler !"
-  tnt_party:
+      - "&7Propulsez-vous dans les airs"
+      - "&7comme une araignée."
+  paintball:
     category: gadgets
-    rarity: LEGENDAIRE
-    material: TNT
-    item_material: TNT
-    name: "<!italic><red><b>TNT Party</b>"
+    rarity: RARE
+    material: DIAMOND_HORSE_ARMOR
+    item_material: DIAMOND_HORSE_ARMOR
+    name: "<!italic><aqua><b>FUSIL PAINTBALL</b>"
     lore:
-      - "<gray>Boum ! (Sans danger)"
+      - "&7Colorez vos amis avec"
+      - "&7de la neige."

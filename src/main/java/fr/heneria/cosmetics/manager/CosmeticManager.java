@@ -60,12 +60,12 @@ public class CosmeticManager {
                 String hdbId = section.getString("hdb_id");
                 String materialName = section.getString("material");
                 Material iconMaterial = materialName != null ? Material.matchMaterial(materialName) : null;
-                String rarityStr = section.getString("rarity", "COMMUN");
+                String rarityStr = section.getString("rarity", "COMMON");
                 Rarity rarity;
                 try {
                     rarity = Rarity.valueOf(rarityStr.toUpperCase());
                 } catch (IllegalArgumentException e) {
-                    rarity = Rarity.COMMUN;
+                    rarity = Rarity.COMMON;
                 }
                 List<String> lore = section.getStringList("lore");
 
@@ -271,7 +271,8 @@ public class CosmeticManager {
     private void sendMessage(Player player, String cosmeticName) {
         String msg = cosmeticConfig.getString("settings.messages.equipped");
         if (msg != null) {
-             player.sendMessage(MiniMessage.miniMessage().deserialize(msg, net.kyori.adventure.text.minimessage.tag.resolver.Placeholder.component("cosmetic", MiniMessage.miniMessage().deserialize(cosmeticName))));
+             net.kyori.adventure.text.Component cosmeticComp = MiniMessage.miniMessage().deserialize(cosmeticName);
+             player.sendActionBar(MiniMessage.miniMessage().deserialize(msg, net.kyori.adventure.text.minimessage.tag.resolver.Placeholder.component("cosmetic", cosmeticComp)));
         }
     }
 

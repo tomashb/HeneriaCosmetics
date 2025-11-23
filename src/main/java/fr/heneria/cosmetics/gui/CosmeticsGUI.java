@@ -117,7 +117,7 @@ public class CosmeticsGUI implements Listener {
             int slotIndex = i - startIndex;
             if (slotIndex >= slots.length) break;
 
-            ItemStack icon = createIcon(cosmetic);
+            ItemStack icon = createIcon(cosmetic, player);
             ItemMeta meta = icon.getItemMeta();
             meta.getPersistentDataContainer().set(new org.bukkit.NamespacedKey(plugin, "cosmetic_id"), org.bukkit.persistence.PersistentDataType.STRING, cosmetic.getId());
             icon.setItemMeta(meta);
@@ -192,14 +192,39 @@ public class CosmeticsGUI implements Listener {
         return s == 0 || s == 1 || s == 7 || s == 8 || s == 9 || s == 17 || s == 36 || s == 44 || s == 45 || s == 46 || s == 52 || s == 53;
     }
 
-    private ItemStack createIcon(Cosmetic cosmetic) {
+    private ItemStack createIcon(Cosmetic cosmetic, Player player) {
         List<String> combinedLore = new ArrayList<>();
+        combinedLore.add(""); // Empty line
+
+        if (cosmetic.getLore() != null) {
+            for (String line : cosmetic.getLore()) {
+                combinedLore.add("<!italic><gray>" + line.replace("&", "§"));
+            }
+        }
+
+        combinedLore.add("<!italic><dark_gray>⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"); // Separator
+
         if (cosmetic.getRarity() != null) {
             combinedLore.add(cosmetic.getRarity().getDisplay());
         }
-        if (cosmetic.getLore() != null) {
-            combinedLore.addAll(cosmetic.getLore());
+
+        // Check state
+        boolean isEquipped = false;
+        fr.heneria.cosmetics.model.ActiveCosmetic active = manager.getActiveCosmetic(player.getUniqueId());
+        if (cosmetic instanceof fr.heneria.cosmetics.model.Hat) {
+             isEquipped = cosmetic.getId().equals(active.getCurrentHatId());
+        } else if (cosmetic instanceof fr.heneria.cosmetics.model.ParticleEffect) {
+             isEquipped = cosmetic.getId().equals(active.getCurrentParticleId());
+        } else if (cosmetic instanceof fr.heneria.cosmetics.model.Gadget) {
+             isEquipped = cosmetic.getId().equals(active.getCurrentGadgetId());
         }
+
+        if (isEquipped) {
+            combinedLore.add("<!italic><green>✔ ACTUELLEMENT ÉQUIPÉ");
+        } else {
+            combinedLore.add("<!italic><yellow>▶ Clic pour équiper");
+        }
+
         return createHeadItem(cosmetic.getHdbId(), cosmetic.getIconMaterial(), cosmetic.getName(), combinedLore);
     }
 
@@ -335,6 +360,7 @@ public class CosmeticsGUI implements Listener {
                     manager.equipCosmetic(player, id);
                     player.closeInventory();
                 } else {
+                    player.playSound(player.getLocation(), org.bukkit.Sound.ENTITY_VILLAGER_NO, 1f, 1f);
                     String msg = manager.getCosmeticConfig().getString("settings.messages.no_permission");
                     if (msg != null) player.sendMessage(MiniMessage.miniMessage().deserialize(msg));
                 }
