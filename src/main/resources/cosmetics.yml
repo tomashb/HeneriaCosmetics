@@ -1,31 +1,98 @@
-messages:
-  prefix: "<gradient:#d000ff:#ff00aa><b>HeneriaCosmetics</b></gradient> <dark_gray>» "
-  equipped: "<green>Vous avez équipé : <white>%cosmetic%"
-  unequipped: "<red>Cosmétiques retirés."
-  no_permission: "<red>Vous n'avez pas le grade pour ça !"
+settings:
+  menu_title: "<!italic><#d000ff><b>GARDE-ROBE</b>"
+  frame_material: PURPLE_STAINED_GLASS_PANE
+  back_item:
+    hdb_id: "9222" # Flèche rouge/gauche
+    name: "<!italic><red><b>Retour</b>"
+  unequip_item:
+    hdb_id: "9382" # Croix rouge/Barrier
+    name: "<!italic><c:#ff5555><b>Tout retirer</b>"
+  messages:
+    prefix: "<gradient:#d000ff:#ff00aa><b>HeneriaCosmetics</b></gradient> <dark_gray>» "
+    equipped: "<green>Vous avez équipé : <white>%cosmetic%"
+    unequipped: "<red>Cosmétiques retirés."
+    no_permission: "<red>Vous n'avez pas le grade pour ça !"
 
-particles:
-  flame_aura:
-    name: "&6Aura de Feu"
-    permission: "heneria.cosmetics.flame"
-    icon: BLAZE_POWDER
-    particle_type: FLAME
-    count: 2
-  heart_trail:
-    name: "&cCœurs d'Amour"
-    permission: "heneria.cosmetics.heart"
-    icon: POPPY
-    particle_type: HEART
-    count: 1
-
-hats:
-  astronaut:
-    name: "&bAstronaute"
-    permission: "heneria.hats.astro"
-    hdb_id: "34646"
+categories:
+  hats:
+    slot: 20
+    hdb_id: "34646" # Casque astronaute
+    name: "<!italic><gradient:#00aaff:#0044ff><b>CHAPEAUX</b></gradient>"
     lore:
-      - "&7Vers l'infini..."
-  tnt_head:
-    name: "&cTNT"
-    permission: "heneria.hats.tnt"
-    material: TNT
+      - "<!italic><gray>Décorez votre tête avec style."
+      - ""
+      - "<!italic><yellow>▶ Clique pour ouvrir"
+  particles:
+    slot: 22
+    hdb_id: "9450" # Boule de feu/Magma
+    name: "<!italic><gradient:#ffaa00:#ff4400><b>AURA & PARTICULES</b></gradient>"
+    lore:
+      - "<!italic><gray>Laissez une trace derrière vous."
+      - ""
+      - "<!italic><yellow>▶ Clique pour ouvrir"
+  gadgets:
+    slot: 24
+    hdb_id: "25299" # Coffre/Slime fun
+    name: "<!italic><gradient:#00ffaa:#00aa44><b>GADGETS</b></gradient>"
+    lore:
+      - "<!italic><gray>Jouets et outils funs."
+      - ""
+      - "<!italic><yellow>▶ Clique pour ouvrir"
+
+list:
+
+  # --- CHAPEAUX ---
+
+  crown_gold:
+    category: hats
+    permission: "heneria.cosmetics.crown"
+    hdb_id: "7256" # Couronne Or
+    name: "<!italic><#ffcc00><b>Couronne Royale</b>"
+    lore:
+      - "<!italic><gray>Pour les rois du PvP."
+  astronaut_helmet:
+    category: hats
+    permission: "heneria.cosmetics.astro"
+    hdb_id: "34646"
+    name: "<!italic><#aaffff><b>Casque Spatial</b>"
+    lore:
+      - "<!italic><gray>Vers l'infini et au-delà !"
+  tv_head:
+    category: hats
+    permission: "heneria.cosmetics.tv"
+    hdb_id: "23628" # Tête TV/Moniteur
+    name: "<!italic><#aaaaaa><b>Tête de TV</b>"
+    lore:
+      - "<!italic><gray>Pas de signal..."
+
+  # --- PARTICULES ---
+
+  flame_ring:
+    category: particles
+    permission: "heneria.cosmetics.flame"
+    type: FLAME
+    style: RING # Style d'animation (Cercle)
+    hdb_id: "9450"
+    name: "<!italic><#ff5500><b>Cercle de Feu</b>"
+    lore:
+      - "<!italic><gray>Une aura brûlante."
+  love_trail:
+    category: particles
+    permission: "heneria.cosmetics.heart"
+    type: HEART
+    style: TRAIL
+    hdb_id: "9366" # Cœur rouge
+    name: "<!italic><#ff55aa><b>Pluie de Cœurs</b>"
+    lore:
+      - "<!italic><gray>Répandez l'amour."
+
+  # --- GADGETS ---
+
+  grappling_hook:
+    category: gadgets
+    permission: "heneria.cosmetics.grapple"
+    hdb_id: "25299"
+    name: "<!italic><#00ffaa><b>Grappin</b>"
+    lore:
+      - "<!italic><gray>Volez comme une araignée."
+    item_material: FISHING_ROD

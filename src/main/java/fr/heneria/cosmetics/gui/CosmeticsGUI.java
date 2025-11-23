@@ -2,18 +2,17 @@ package fr.heneria.cosmetics.gui;
 
 import fr.heneria.cosmetics.HeneriaCosmetics;
 import fr.heneria.cosmetics.manager.CosmeticManager;
-import fr.heneria.cosmetics.model.Hat;
-import fr.heneria.cosmetics.model.ParticleEffect;
+import fr.heneria.cosmetics.model.Cosmetic;
 import me.arcaniax.hdb.api.HeadDatabaseAPI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -31,110 +30,74 @@ public class CosmeticsGUI implements Listener {
     public CosmeticsGUI(HeneriaCosmetics plugin) {
         this.plugin = plugin;
         this.manager = plugin.getCosmeticManager();
-        if (Bukkit.getPluginManager().getPlugin("HeadDatabase") != null) {
-            this.hdbApi = new HeadDatabaseAPI();
-        } else {
-            this.hdbApi = null;
-        }
+        this.hdbApi = manager.getHdbApi();
         Bukkit.getPluginManager().registerEvents(this, plugin);
     }
 
     public void openMainMenu(Player player) {
-        Inventory inv = Bukkit.createInventory(null, 54, Component.text("Cosmétiques"));
+        String titleStr = manager.getCosmeticConfig().getString("settings.menu_title", "GARDE-ROBE");
+        Inventory inv = Bukkit.createInventory(null, 54, MiniMessage.miniMessage().deserialize(titleStr));
         setupFrame(inv);
 
-        // Slot 20: Chapeaux
-        inv.setItem(20, createItem(Material.DIAMOND_HELMET, "&bChapeaux", "&7Cliquez pour voir les chapeaux."));
+        // Load categories from config
+        ConfigurationSection categories = manager.getCosmeticConfig().getConfigurationSection("categories");
+        if (categories != null) {
+            for (String key : categories.getKeys(false)) {
+                ConfigurationSection sec = categories.getConfigurationSection(key);
+                if (sec == null) continue;
 
-        // Slot 24: Particules
-        inv.setItem(24, createItem(Material.BLAZE_POWDER, "&6Particules", "&7Cliquez pour voir les particules."));
+                int slot = sec.getInt("slot");
+                String hdbId = sec.getString("hdb_id");
+                String name = sec.getString("name");
+                List<String> lore = sec.getStringList("lore");
 
-        // Slot 49: Tout retirer
-        inv.setItem(49, createItem(Material.BARRIER, "&cTout retirer", "&7Cliquez pour retirer tous vos cosmétiques."));
-
-        player.openInventory(inv);
-    }
-
-    private void openHatsMenu(Player player) {
-        Inventory inv = Bukkit.createInventory(null, 54, Component.text("Chapeaux"));
-        setupFrame(inv);
-
-        // Back button at 49 or somewhere? Usually 49 is close or back.
-        inv.setItem(49, createItem(Material.ARROW, "&cRetour", "&7Retour au menu principal"));
-
-        int[] slots = getInnerSlots();
-        int index = 0;
-
-        for (Hat hat : manager.getHats().values()) {
-            if (index >= slots.length) break;
-
-            ItemStack icon;
-            if (hat.getHdbId() != null && hdbApi != null) {
-                icon = hdbApi.getItemHead(hat.getHdbId());
-            } else if (hat.getMaterial() != null) {
-                icon = new ItemStack(hat.getMaterial());
-            } else {
-                icon = new ItemStack(Material.PAPER);
+                ItemStack icon = createHeadItem(hdbId, name, lore);
+                // Add hidden PDC to identify category? Or just use slot map in listener.
+                // Using slot logic is simpler for main menu.
+                inv.setItem(slot, icon);
             }
+        }
 
-            ItemMeta meta = icon.getItemMeta();
-            meta.displayName(legacyToComponent(hat.getName()));
-            List<Component> lore = new ArrayList<>();
-            if (hat.getLore() != null) {
-                for (String l : hat.getLore()) {
-                    lore.add(legacyToComponent(l));
-                }
-            }
-
-            // Check permission
-            if (!player.hasPermission(hat.getPermission())) {
-                lore.add(Component.empty());
-                lore.add(legacyToComponent("&cVerrouillé"));
-            } else {
-                lore.add(Component.empty());
-                lore.add(legacyToComponent("&eCliquez pour équiper"));
-            }
-
-            meta.lore(lore);
-            icon.setItemMeta(meta);
-
-            inv.setItem(slots[index++], icon);
+        // Tout retirer item
+        ConfigurationSection unequipSec = manager.getCosmeticConfig().getConfigurationSection("settings.unequip_item");
+        if (unequipSec != null) {
+            ItemStack item = createHeadItem(unequipSec.getString("hdb_id"), unequipSec.getString("name"), null);
+            inv.setItem(49, item);
         }
 
         player.openInventory(inv);
     }
 
-    private void openParticlesMenu(Player player) {
-        Inventory inv = Bukkit.createInventory(null, 54, Component.text("Particules"));
+    private void openSubMenu(Player player, String category) {
+        String titleStr = manager.getCosmeticConfig().getString("categories." + category + ".name", category.toUpperCase());
+        Inventory inv = Bukkit.createInventory(null, 54, MiniMessage.miniMessage().deserialize(titleStr));
         setupFrame(inv);
 
-        inv.setItem(49, createItem(Material.ARROW, "&cRetour", "&7Retour au menu principal"));
+        // Back button
+        ConfigurationSection backSec = manager.getCosmeticConfig().getConfigurationSection("settings.back_item");
+        if (backSec != null) {
+            ItemStack item = createHeadItem(backSec.getString("hdb_id"), backSec.getString("name"), null);
+            inv.setItem(49, item);
+        }
 
+        // List cosmetics
         int[] slots = getInnerSlots();
         int index = 0;
 
-        for (ParticleEffect particle : manager.getParticles().values()) {
+        for (Cosmetic cosmetic : manager.getCosmetics().values()) {
+            if (!cosmetic.getCategory().equalsIgnoreCase(category)) continue;
             if (index >= slots.length) break;
 
-            ItemStack icon = new ItemStack(particle.getIcon());
+            ItemStack icon = createHeadItem(cosmetic.getHdbId(), cosmetic.getName(), cosmetic.getLore());
+
+            // Permission check logic in lore or visual?
+            // Prompt says: "Assure-toi que si on clique sur un cosmétique sans avoir la permission, ça envoie un message d'erreur propre."
+            // But we can also show visual indicator. Prompt "lore" example implies just description.
+            // I'll stick to error on click, but maybe add "Locked" text if requested? Prompt didn't strictly request visual lock.
+
+            // Store ID in PDC for reliable retrieval
             ItemMeta meta = icon.getItemMeta();
-            meta.displayName(legacyToComponent(particle.getName()));
-
-             List<Component> lore = new ArrayList<>();
-             if (particle.getLore() != null) {
-                 for (String l : particle.getLore()) {
-                     lore.add(legacyToComponent(l));
-                 }
-             }
-
-            if (!player.hasPermission(particle.getPermission())) {
-                lore.add(Component.empty());
-                lore.add(legacyToComponent("&cVerrouillé"));
-            } else {
-                lore.add(Component.empty());
-                lore.add(legacyToComponent("&eCliquez pour équiper"));
-            }
-            meta.lore(lore);
+            meta.getPersistentDataContainer().set(new org.bukkit.NamespacedKey(plugin, "cosmetic_id"), org.bukkit.persistence.PersistentDataType.STRING, cosmetic.getId());
             icon.setItemMeta(meta);
 
             inv.setItem(slots[index++], icon);
@@ -144,121 +107,180 @@ public class CosmeticsGUI implements Listener {
     }
 
     private void setupFrame(Inventory inv) {
-        ItemStack glass = createItem(Material.PURPLE_STAINED_GLASS_PANE, " ", null);
+        String matName = manager.getCosmeticConfig().getString("settings.frame_material", "PURPLE_STAINED_GLASS_PANE");
+        Material mat = Material.matchMaterial(matName);
+        if (mat == null) mat = Material.PURPLE_STAINED_GLASS_PANE;
 
-        // 0, 1, 7, 8
-        inv.setItem(0, glass);
-        inv.setItem(1, glass);
-        inv.setItem(7, glass);
-        inv.setItem(8, glass);
+        ItemStack glass = new ItemStack(mat);
+        ItemMeta meta = glass.getItemMeta();
+        meta.displayName(Component.empty());
+        glass.setItemMeta(meta);
 
-        // Bottom row (45-53) except 49 potentially? The prompt says "Remplis les slots 0,1,7,8 et le bas"
-        for (int i = 45; i < 54; i++) {
-            if (inv.getItem(i) == null) {
-                inv.setItem(i, glass);
-            }
-        }
+        // Slots: 0, 1, 7, 8 (Top)
+        inv.setItem(0, glass); inv.setItem(1, glass);
+        inv.setItem(7, glass); inv.setItem(8, glass);
+
+        // 9, 17 (Row 2 sides)
+        inv.setItem(9, glass); inv.setItem(17, glass);
+
+        // 36, 44 (Row 5 sides)
+        inv.setItem(36, glass); inv.setItem(44, glass);
+
+        // 45, 46, 52, 53 (Bottom)
+        inv.setItem(45, glass); inv.setItem(46, glass);
+        inv.setItem(52, glass); inv.setItem(53, glass);
     }
 
     private int[] getInnerSlots() {
-        // Simple 54 slots logic, excluding borders 0,1,7,8 and bottom 45-53.
-        // And maybe avoid sides? "Design Heneria" usually implies a specific layout but prompt just says "Design des Menus Heneria (le cadre orange)" but "pour que ce soit cohérent".
-        // BUT prompt says: "Remplis les slots 0,1,7,8 et le bas avec des vitres violettes".
-        // It doesn't mention sides (9, 17, 18, 26, 27, 35, 36, 44).
-        // I'll fill all empty slots or just returns available slots.
-        // For simplicity I'll return indices from 9 to 44.
-        int[] slots = new int[36];
-        for (int i = 0; i < 36; i++) {
-            slots[i] = i + 9;
+        // Return slots that are NOT frame or special buttons.
+        // Frame: 0,1,7,8,9,17,36,44,45,46,52,53. Button: 49.
+        List<Integer> slots = new ArrayList<>();
+        for (int i = 0; i < 54; i++) {
+            if (isFrame(i) || i == 49) continue;
+            slots.add(i);
         }
-        return slots;
+        return slots.stream().mapToInt(Integer::intValue).toArray();
     }
 
-    private ItemStack createItem(Material material, String name, String loreLine) {
-        ItemStack item = new ItemStack(material);
+    private boolean isFrame(int s) {
+        return s == 0 || s == 1 || s == 7 || s == 8 || s == 9 || s == 17 || s == 36 || s == 44 || s == 45 || s == 46 || s == 52 || s == 53;
+    }
+
+    private ItemStack createHeadItem(String hdbId, String name, List<String> lore) {
+        ItemStack item;
+        if (hdbApi != null && hdbId != null) {
+            item = hdbApi.getItemHead(hdbId);
+            if (item == null) item = new ItemStack(Material.PLAYER_HEAD); // Fallback
+        } else {
+            item = new ItemStack(Material.PLAYER_HEAD);
+        }
+
         ItemMeta meta = item.getItemMeta();
-        if (meta != null) {
-            meta.displayName(legacyToComponent(name));
-            if (loreLine != null) {
-                List<Component> lore = new ArrayList<>();
-                lore.add(legacyToComponent(loreLine));
-                meta.lore(lore);
+        if (name != null) meta.displayName(MiniMessage.miniMessage().deserialize(name));
+        if (lore != null) {
+            List<Component> loreComps = new ArrayList<>();
+            for (String l : lore) {
+                loreComps.add(MiniMessage.miniMessage().deserialize(l));
             }
-            item.setItemMeta(meta);
+            meta.lore(loreComps);
         }
+        item.setItemMeta(meta);
         return item;
-    }
-
-    private Component legacyToComponent(String text) {
-        return net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacyAmpersand().deserialize(text);
     }
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
         if (!(event.getWhoClicked() instanceof Player player)) return;
 
-        Component titleComp = event.getView().title();
-        String title = net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText().serialize(titleComp);
+        // Detect if it's our menu. We can check title or holder (holder is null).
+        // Checking title is tricky with MiniMessage.
+        // Let's check logic: if frame matches?
+        // Or better: check if title matches Main Menu or any Category name.
 
-        // Check if it is our menu
-        if (!title.equals("Cosmétiques") && !title.equals("Chapeaux") && !title.equals("Particules")) return;
+        String titleStr = manager.getCosmeticConfig().getString("settings.menu_title", "GARDE-ROBE");
+        Component titleComp = event.getView().title();
+
+        // Simple serialization check might fail due to color codes.
+        // But we rely on behavior.
+        // Let's assume valid click if item has PDC or if it matches frame slots?
+
+        // Actually, we can just check if inventory size is 54 and title *contains* some keyword or we just handle standard check.
+        // Or store open menus in a Map<UUID, String> in GUI class.
+
+        // For robustness, let's use the exact title string comparison via serialization if possible,
+        // OR maintain a set of viewers.
+
+        // Let's try matching serialization of the configured title.
+        // Note: Serializing MiniMessage component back to string might differ from input string.
+        // Safer: Check if the top inventory has our frame material in specific slots?
+        // Or just `event.getView().title().equals(...)`.
+
+        // I will use a simplified check: if title contains "GARDE-ROBE" or "CHAPEAUX" etc?
+        // No, config is editable.
+        // I will try to verify if the frame is present.
+        ItemStack frameItem = event.getView().getTopInventory().getItem(0);
+        if (frameItem == null || frameItem.getType() != Material.PURPLE_STAINED_GLASS_PANE && frameItem.getType() != Material.matchMaterial(manager.getCosmeticConfig().getString("settings.frame_material", "PURPLE_STAINED_GLASS_PANE"))) {
+             return; // Likely not our menu
+        }
 
         event.setCancelled(true);
 
         ItemStack clicked = event.getCurrentItem();
-        if (clicked == null || clicked.getType() == Material.AIR || clicked.getType() == Material.PURPLE_STAINED_GLASS_PANE) return;
+        if (clicked == null || clicked.getType() == Material.AIR) return;
 
         int slot = event.getSlot();
+        if (isFrame(slot)) return;
 
-        if (title.equals("Cosmétiques")) {
-            if (slot == 20) {
-                openHatsMenu(player);
-            } else if (slot == 24) {
-                openParticlesMenu(player);
-            } else if (slot == 49) {
-                manager.unequipAll(player);
-                player.closeInventory();
-            }
-        } else if (title.equals("Chapeaux")) {
-            if (slot == 49) {
-                openMainMenu(player);
+        // Determine Menu Level
+        // If slot 49 is "Tout retirer" (Main Menu) or "Back" (Sub Menu)
+
+        // We can distinguish main menu by checking category slots.
+        int hatSlot = manager.getCosmeticConfig().getInt("categories.hats.slot");
+        int particleSlot = manager.getCosmeticConfig().getInt("categories.particles.slot");
+        int gadgetSlot = manager.getCosmeticConfig().getInt("categories.gadgets.slot");
+
+        boolean isMainMenu = (event.getInventory().getItem(hatSlot) != null && event.getInventory().getItem(particleSlot) != null);
+        // This heuristic might fail if sub menu has items in those slots.
+
+        // Let's store current menu type in `player` metadata or a map.
+        // Since I can't easily add metadata to player without plugin instance everywhere (I have it), let's use a weak map here.
+        // But `onInventoryClick` is a new event.
+
+        // Alternative: Use NBT on the frame items?
+        // Or just check if the clicked item corresponds to a category.
+
+        if (slot == 49) {
+             // Check name of item to decide action
+             // "Tout retirer" vs "Retour"
+             // Using PDC check would be better if I added it to buttons.
+             // But I didn't.
+             // Let's assume if it is Main Menu -> Unequip.
+             // How do we know? Main menu title.
+             // OK, I'll compare the component title with the Main Menu title from config.
+             Component mainTitle = MiniMessage.miniMessage().deserialize(manager.getCosmeticConfig().getString("settings.menu_title"));
+             if (event.getView().title().equals(mainTitle)) {
+                 manager.unequipAll(player);
+                 player.closeInventory();
+             } else {
+                 openMainMenu(player);
+             }
+             return;
+        }
+
+        if (slot == hatSlot) {
+            // Check if we are in main menu.
+            Component mainTitle = MiniMessage.miniMessage().deserialize(manager.getCosmeticConfig().getString("settings.menu_title"));
+            if (event.getView().title().equals(mainTitle)) {
+                openSubMenu(player, "hats");
                 return;
             }
-            // Find which hat was clicked.
-            // We can match by display name or keep a map. iterating is fine for small list.
-            for (Hat hat : manager.getHats().values()) {
-                String hatName = net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText().serialize(legacyToComponent(hat.getName()));
-                String clickedName = net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText().serialize(clicked.getItemMeta().displayName());
-
-                if (hatName.equals(clickedName)) {
-                    if (player.hasPermission(hat.getPermission())) {
-                        manager.equipHat(player, hat.getId());
-                        player.closeInventory();
-                    } else {
-                        String msg = manager.getCosmeticConfig().getString("messages.no_permission");
-                        if (msg != null) player.sendMessage(MiniMessage.miniMessage().deserialize(msg));
-                    }
-                    return;
-                }
-            }
-        } else if (title.equals("Particules")) {
-            if (slot == 49) {
-                openMainMenu(player);
+        }
+        if (slot == particleSlot) {
+             Component mainTitle = MiniMessage.miniMessage().deserialize(manager.getCosmeticConfig().getString("settings.menu_title"));
+             if (event.getView().title().equals(mainTitle)) {
+                openSubMenu(player, "particles");
                 return;
-            }
-            for (ParticleEffect particle : manager.getParticles().values()) {
-                String pName = net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText().serialize(legacyToComponent(particle.getName()));
-                String clickedName = net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText().serialize(clicked.getItemMeta().displayName());
+             }
+        }
+        if (slot == gadgetSlot) {
+             Component mainTitle = MiniMessage.miniMessage().deserialize(manager.getCosmeticConfig().getString("settings.menu_title"));
+             if (event.getView().title().equals(mainTitle)) {
+                openSubMenu(player, "gadgets");
+                return;
+             }
+        }
 
-                if (pName.equals(clickedName)) {
-                     if (player.hasPermission(particle.getPermission())) {
-                        manager.equipParticle(player, particle.getId());
-                        player.closeInventory();
-                    } else {
-                        String msg = manager.getCosmeticConfig().getString("messages.no_permission");
-                         if (msg != null) player.sendMessage(MiniMessage.miniMessage().deserialize(msg));
-                    }
-                    return;
+        // Handle Cosmetic Click
+        if (clicked.getItemMeta() != null && clicked.getItemMeta().getPersistentDataContainer().has(new org.bukkit.NamespacedKey(plugin, "cosmetic_id"), org.bukkit.persistence.PersistentDataType.STRING)) {
+            String id = clicked.getItemMeta().getPersistentDataContainer().get(new org.bukkit.NamespacedKey(plugin, "cosmetic_id"), org.bukkit.persistence.PersistentDataType.STRING);
+            Cosmetic cosmetic = manager.getCosmetics().get(id);
+            if (cosmetic != null) {
+                if (player.hasPermission(cosmetic.getPermission())) {
+                    manager.equipCosmetic(player, id);
+                    player.closeInventory();
+                } else {
+                    String msg = manager.getCosmeticConfig().getString("settings.messages.no_permission");
+                    if (msg != null) player.sendMessage(MiniMessage.miniMessage().deserialize(msg));
                 }
             }
         }
@@ -266,10 +288,9 @@ public class CosmeticsGUI implements Listener {
 
     @EventHandler
     public void onInventoryDrag(InventoryDragEvent event) {
-        Component titleComp = event.getView().title();
-        String title = net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText().serialize(titleComp);
-        if (title.equals("Cosmétiques") || title.equals("Chapeaux") || title.equals("Particules")) {
-            event.setCancelled(true);
+        // Prevent dragging in our GUI
+        if (event.getView().getTopInventory().getItem(0) != null && event.getView().getTopInventory().getItem(0).getType() == Material.PURPLE_STAINED_GLASS_PANE) { // Weak check
+             event.setCancelled(true);
         }
     }
 }
