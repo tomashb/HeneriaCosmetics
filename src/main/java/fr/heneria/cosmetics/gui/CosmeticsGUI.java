@@ -69,39 +69,85 @@ public class CosmeticsGUI implements Listener {
     }
 
     private void openSubMenu(Player player, String category) {
+        openSubMenu(player, category, 0);
+    }
+
+    private void openSubMenu(Player player, String category, int page) {
         String titleStr = manager.getCosmeticConfig().getString("categories." + category + ".name", category.toUpperCase());
+        if (page > 0) {
+            // Append page number or leave it? Title change isn't requested but good for clarity.
+            // titleStr += " (" + (page + 1) + ")";
+        }
         Inventory inv = Bukkit.createInventory(null, 54, MiniMessage.miniMessage().deserialize(titleStr));
         setupFrame(inv);
 
         // Back button
-        ConfigurationSection backSec = manager.getCosmeticConfig().getConfigurationSection("settings.back_item");
+        ConfigurationSection backSec = manager.getCosmeticConfig().getConfigurationSection("settings.items.back");
+        if (backSec == null) backSec = manager.getCosmeticConfig().getConfigurationSection("settings.back_item"); // Fallback
         if (backSec != null) {
-            ItemStack item = createHeadItem(backSec.getString("hdb_id"), null, backSec.getString("name"), null);
+            ItemStack item = createHeadItem(backSec.getString("hdb_id"), Material.matchMaterial(backSec.getString("material", "OAK_DOOR")), backSec.getString("name"), null);
+            // PDC to identify back button or just check slot 49 in listener?
+            // Listener checks 49.
+            // But if we have pagination buttons, 49 is still back.
+            // Wait, prompt said: "Slot 49 : Retour au Menu Principal".
             inv.setItem(49, item);
         }
 
-        // List cosmetics
-        int[] slots = getInnerSlots();
-        int index = 0;
+        // Filter cosmetics for this category
+        List<Cosmetic> categoryCosmetics = new ArrayList<>();
+        for (Cosmetic c : manager.getCosmetics().values()) {
+            if (c.getCategory().equalsIgnoreCase(category)) {
+                categoryCosmetics.add(c);
+            }
+        }
 
-        for (Cosmetic cosmetic : manager.getCosmetics().values()) {
-            if (!cosmetic.getCategory().equalsIgnoreCase(category)) continue;
-            if (index >= slots.length) break;
+        int[] slots = {19, 20, 21, 22, 23, 24, 25, 28, 29, 30, 31, 32, 33, 34};
+        int itemsPerPage = slots.length;
+        int totalPages = (int) Math.ceil((double) categoryCosmetics.size() / itemsPerPage);
+
+        // Ensure page is valid
+        if (page < 0) page = 0;
+        if (page >= totalPages && totalPages > 0) page = totalPages - 1;
+
+        int startIndex = page * itemsPerPage;
+        int endIndex = Math.min(startIndex + itemsPerPage, categoryCosmetics.size());
+
+        for (int i = startIndex; i < endIndex; i++) {
+            Cosmetic cosmetic = categoryCosmetics.get(i);
+            int slotIndex = i - startIndex;
+            if (slotIndex >= slots.length) break;
 
             ItemStack icon = createIcon(cosmetic);
-
-            // Permission check logic in lore or visual?
-            // Prompt says: "Assure-toi que si on clique sur un cosmétique sans avoir la permission, ça envoie un message d'erreur propre."
-            // But we can also show visual indicator. Prompt "lore" example implies just description.
-            // I'll stick to error on click, but maybe add "Locked" text if requested? Prompt didn't strictly request visual lock.
-
-            // Store ID in PDC for reliable retrieval
             ItemMeta meta = icon.getItemMeta();
             meta.getPersistentDataContainer().set(new org.bukkit.NamespacedKey(plugin, "cosmetic_id"), org.bukkit.persistence.PersistentDataType.STRING, cosmetic.getId());
             icon.setItemMeta(meta);
 
-            inv.setItem(slots[index++], icon);
+            inv.setItem(slots[slotIndex], icon);
         }
+
+        // Pagination Controls
+        // Slot 38: Prev
+        if (page > 0) {
+            ConfigurationSection prevSec = manager.getCosmeticConfig().getConfigurationSection("settings.items.prev_page");
+            ItemStack prevItem = createHeadItem(null, Material.matchMaterial(prevSec != null ? prevSec.getString("material", "ARROW") : "ARROW"), prevSec != null ? prevSec.getString("name", "<yellow>Prev") : "<yellow>Prev", null);
+            ItemMeta meta = prevItem.getItemMeta();
+            meta.getPersistentDataContainer().set(new org.bukkit.NamespacedKey(plugin, "gui_action"), org.bukkit.persistence.PersistentDataType.STRING, "prev_page;" + category + ";" + (page - 1));
+            prevItem.setItemMeta(meta);
+            inv.setItem(38, prevItem);
+        }
+
+        // Slot 42: Next
+        if (page < totalPages - 1) {
+            ConfigurationSection nextSec = manager.getCosmeticConfig().getConfigurationSection("settings.items.next_page");
+            ItemStack nextItem = createHeadItem(null, Material.matchMaterial(nextSec != null ? nextSec.getString("material", "ARROW") : "ARROW"), nextSec != null ? nextSec.getString("name", "<green>Next") : "<green>Next", null);
+            ItemMeta meta = nextItem.getItemMeta();
+            meta.getPersistentDataContainer().set(new org.bukkit.NamespacedKey(plugin, "gui_action"), org.bukkit.persistence.PersistentDataType.STRING, "next_page;" + category + ";" + (page + 1));
+            nextItem.setItemMeta(meta);
+            inv.setItem(42, nextItem);
+        }
+
+        // Store current page in player metadata or persistent variable?
+        // We encode next/prev action in the button items themselves.
 
         player.openInventory(inv);
     }
@@ -147,7 +193,14 @@ public class CosmeticsGUI implements Listener {
     }
 
     private ItemStack createIcon(Cosmetic cosmetic) {
-        return createHeadItem(cosmetic.getHdbId(), cosmetic.getIconMaterial(), cosmetic.getName(), cosmetic.getLore());
+        List<String> combinedLore = new ArrayList<>();
+        if (cosmetic.getRarity() != null) {
+            combinedLore.add(cosmetic.getRarity().getDisplay());
+        }
+        if (cosmetic.getLore() != null) {
+            combinedLore.addAll(cosmetic.getLore());
+        }
+        return createHeadItem(cosmetic.getHdbId(), cosmetic.getIconMaterial(), cosmetic.getName(), combinedLore);
     }
 
     private ItemStack createHeadItem(String hdbId, Material material, String name, List<String> lore) {
@@ -217,32 +270,25 @@ public class CosmeticsGUI implements Listener {
         int slot = event.getSlot();
         if (isFrame(slot)) return;
 
+        // Handle Navigation Actions
+        if (clicked.getItemMeta() != null && clicked.getItemMeta().getPersistentDataContainer().has(new org.bukkit.NamespacedKey(plugin, "gui_action"), org.bukkit.persistence.PersistentDataType.STRING)) {
+             String actionData = clicked.getItemMeta().getPersistentDataContainer().get(new org.bukkit.NamespacedKey(plugin, "gui_action"), org.bukkit.persistence.PersistentDataType.STRING);
+             if (actionData != null) {
+                 String[] parts = actionData.split(";");
+                 String action = parts[0];
+                 if (action.equals("next_page") || action.equals("prev_page")) {
+                     String category = parts[1];
+                     int page = Integer.parseInt(parts[2]);
+                     openSubMenu(player, category, page);
+                     return;
+                 }
+             }
+        }
+
         // Determine Menu Level
         // If slot 49 is "Tout retirer" (Main Menu) or "Back" (Sub Menu)
 
-        // We can distinguish main menu by checking category slots.
-        int hatSlot = manager.getCosmeticConfig().getInt("categories.hats.slot");
-        int particleSlot = manager.getCosmeticConfig().getInt("categories.particles.slot");
-        int gadgetSlot = manager.getCosmeticConfig().getInt("categories.gadgets.slot");
-
-        boolean isMainMenu = (event.getInventory().getItem(hatSlot) != null && event.getInventory().getItem(particleSlot) != null);
-        // This heuristic might fail if sub menu has items in those slots.
-
-        // Let's store current menu type in `player` metadata or a map.
-        // Since I can't easily add metadata to player without plugin instance everywhere (I have it), let's use a weak map here.
-        // But `onInventoryClick` is a new event.
-
-        // Alternative: Use NBT on the frame items?
-        // Or just check if the clicked item corresponds to a category.
-
         if (slot == 49) {
-             // Check name of item to decide action
-             // "Tout retirer" vs "Retour"
-             // Using PDC check would be better if I added it to buttons.
-             // But I didn't.
-             // Let's assume if it is Main Menu -> Unequip.
-             // How do we know? Main menu title.
-             // OK, I'll compare the component title with the Main Menu title from config.
              Component mainTitle = MiniMessage.miniMessage().deserialize(manager.getCosmeticConfig().getString("settings.menu_title"));
              if (event.getView().title().equals(mainTitle)) {
                  manager.unequipAll(player);
@@ -253,8 +299,11 @@ public class CosmeticsGUI implements Listener {
              return;
         }
 
+        int hatSlot = manager.getCosmeticConfig().getInt("categories.hats.slot");
+        int particleSlot = manager.getCosmeticConfig().getInt("categories.particles.slot");
+        int gadgetSlot = manager.getCosmeticConfig().getInt("categories.gadgets.slot");
+
         if (slot == hatSlot) {
-            // Check if we are in main menu.
             Component mainTitle = MiniMessage.miniMessage().deserialize(manager.getCosmeticConfig().getString("settings.menu_title"));
             if (event.getView().title().equals(mainTitle)) {
                 openSubMenu(player, "hats");

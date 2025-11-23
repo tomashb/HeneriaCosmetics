@@ -1,7 +1,17 @@
 settings:
-  menu_title: "<!italic><#d000ff><b>GARDE-ROBE SUPRÊME</b>"
+  menu_title: "<!italic><#d000ff><b>GARDE-ROBE</b>"
   frame_material: PURPLE_STAINED_GLASS_PANE
   cooldown_seconds: 3
+  items:
+    next_page:
+      material: ARROW
+      name: "<!italic><green>Page Suivante »"
+    prev_page:
+      material: ARROW
+      name: "<!italic><yellow>« Page Précédente"
+    back:
+      material: OAK_DOOR
+      name: "<!italic><red>Retour au Menu"
   messages:
     cooldown: "<!italic><red>Doucement ! Attendez encore quelques secondes."
     no_perm: "<!italic><red>✖ Vous n'avez pas ce cosmétique !"
@@ -27,247 +37,134 @@ categories:
 
 list:
 
-# ================= CHAPEAUX (HeadDatabase) =================
+# === CHAPEAUX (Layout: 19-25, 28-34) ===
 
-# Note : Si une tête est un "Steve", c'est que l'ID HDB a changé. Vérifie sur minecraft-heads.com
-
-  crown_king:
+  tnt_head:
     category: hats
-    permission: "heneria.hat.king"
-    hdb_id: "7256" # Couronne Or
-    name: "<!italic><gold><b>Couronne Roi</b>"
-  crown_ice:
+    permission: "heneria.hat.tnt"
+    rarity: COMMUN
+    material: TNT # Item Vanilla (Sûr à 100%)
+    name: "<!italic><red><b>Chapeau TNT</b>"
+  pumpkin_mask:
     category: hats
-    hdb_id: "39230" # Couronne Glace
-    name: "<!italic><aqua><b>Couronne de Glace</b>"
-  fox_mask:
+    permission: "heneria.hat.pumpkin"
+    rarity: COMMUN
+    material: CARVED_PUMPKIN
+    name: "<!italic><gold><b>Citrouille</b>"
+  skeleton_skull:
     category: hats
-    hdb_id: "33932" # Masque Kitsune
-    name: "<!italic><red><b>Masque Renard</b>"
+    rarity: RARE
+    material: SKELETON_SKULL
+    name: "<!italic><gray><b>Crâne</b>"
+  astronaut:
+    category: hats
+    rarity: LEGENDAIRE
+    hdb_id: "34646" # ID HDB fiable
+    name: "<!italic><aqua><b>Astronaute</b>"
   monitor:
     category: hats
-    hdb_id: "421" # Ecran PC
-    name: "<!italic><gray><b>Moniteur</b>"
+    rarity: EPIQUE
+    hdb_id: "421"
+    name: "<!italic><gray><b>Moniteur TV</b>"
   camera:
     category: hats
-    hdb_id: "24136" # Camera
-    name: "<!italic><#555555><b>GoPro</b>"
-  taco:
+    rarity: RARE
+    hdb_id: "24136"
+    name: "<!italic><#555555><b>Caméra</b>"
+  crown_king:
     category: hats
-    hdb_id: "409"
-    name: "<!italic><gold><b>Taco Mexicain</b>"
-  burger:
+    rarity: LEGENDAIRE
+    hdb_id: "7256"
+    name: "<!italic><gold><b>Couronne Royale</b>"
+  rubiks:
     category: hats
-    hdb_id: "408"
-    name: "<!italic><gold><b>Cheeseburger</b>"
-  shrek:
+    rarity: RARE
+    hdb_id: "282"
+    name: "<!italic><#ff00aa><b>Rubik's Cube</b>"
+  scaphandre:
     category: hats
-    hdb_id: "260"
-    name: "<!italic><green><b>L'Ogre</b>"
-  elmo:
-    category: hats
-    hdb_id: "296"
-    name: "<!italic><red><b>Elmo</b>"
-  bread:
-    category: hats
-    hdb_id: "313"
-    name: "<!italic><yellow><b>Pain Grillé</b>"
-  nutella:
-    category: hats
-    hdb_id: "318"
-    name: "<!italic><#654321><b>Pâte à tartiner</b>"
-  clown:
-    category: hats
-    hdb_id: "293"
-    name: "<!italic><red><b>Clown</b>"
-  demon:
-    category: hats
-    hdb_id: "287"
-    name: "<!italic><red><b>Démon Rouge</b>"
-  angel:
-    category: hats
-    hdb_id: "286"
-    name: "<!italic><white><b>Ange</b>"
-  deadpool:
-    category: hats
-    hdb_id: "442"
-    name: "<!italic><red><b>Deadpool</b>"
-  batman:
-    category: hats
-    hdb_id: "439"
-    name: "<!italic><black><b>Batman</b>"
-  ironman:
-    category: hats
-    hdb_id: "444"
-    name: "<!italic><red><b>IronMan</b>"
-  spiderman:
-    category: hats
-    hdb_id: "446"
-    name: "<!italic><red><b>SpiderMan</b>"
-  yoda:
-    category: hats
-    hdb_id: "453"
-    name: "<!italic><green><b>Maitre Yoda</b>"
-  mario:
-    category: hats
-    hdb_id: "457"
-    name: "<!italic><red><b>Mario</b>"
+    rarity: EPIQUE
+    hdb_id: "30262"
+    name: "<!italic><aqua><b>Scaphandrier</b>"
 
-# ================= PARTICULES (Icônes Vanilla = Sûr) =================
+  # Duplicates for Pagination Test
+  hat_1:
+    category: hats
+    rarity: COMMUN
+    material: STONE
+    name: "<!italic><gray>Hat 1"
+  hat_2:
+    category: hats
+    rarity: COMMUN
+    material: DIRT
+    name: "<!italic><gray>Hat 2"
+  hat_3:
+    category: hats
+    rarity: COMMUN
+    material: GRASS_BLOCK
+    name: "<!italic><gray>Hat 3"
+  hat_4:
+    category: hats
+    rarity: COMMUN
+    material: COBBLESTONE
+    name: "<!italic><gray>Hat 4"
+  hat_5:
+    category: hats
+    rarity: COMMUN
+    material: SAND
+    name: "<!italic><gray>Hat 5"
+  hat_6:
+    category: hats
+    rarity: COMMUN
+    material: GRAVEL
+    name: "<!italic><gray>Hat 6"
+
+# === PARTICULES ===
 
   flame_aura:
     category: particles
+    rarity: EPIQUE
     type: FLAME
     style: RING
     material: BLAZE_POWDER
     name: "<!italic><gold><b>Aura de Feu</b>"
   heart_aura:
     category: particles
+    rarity: RARE
     type: HEART
     style: RING
     material: RED_DYE
-    name: "<!italic><red><b>Amour</b>"
-  villager:
+    name: "<!italic><red><b>Cœurs</b>"
+  water_drip:
     category: particles
-    type: HAPPY_VILLAGER
-    style: TRAIL
-    material: EMERALD
-    name: "<!italic><green><b>Happy</b>"
-  notes:
-    category: particles
-    type: NOTE
-    style: TRAIL
-    material: NOTE_BLOCK
-    name: "<!italic><aqua><b>Mélodie</b>"
-  lava:
-    category: particles
-    type: LAVA
-    style: TRAIL
-    material: LAVA_BUCKET
-    name: "<!italic><gold><b>Gouttes de Lave</b>"
-  water:
-    category: particles
+    rarity: COMMUN
     type: DRIPPING_WATER
     style: TRAIL
     material: WATER_BUCKET
     name: "<!italic><blue><b>Pluie</b>"
-  clouds:
+  notes:
     category: particles
-    type: CLOUD
+    rarity: RARE
+    type: NOTE
     style: TRAIL
-    material: FEATHER
-    name: "<!italic><white><b>Nuages</b>"
-  crit:
-    category: particles
-    type: CRIT
-    style: TRAIL
-    material: IRON_SWORD
-    name: "<!italic><gray><b>Critique</b>"
-  magic:
-    category: particles
-    type: ENCHANT
-    style: TRAIL
-    material: ENCHANTING_TABLE
-    name: "<!italic><light_purple><b>Magie</b>"
-  slime:
-    category: particles
-    type: ITEM_SLIME
-    style: TRAIL
-    material: SLIME_BALL
-    name: "<!italic><green><b>Slime</b>"
-  snow:
-    category: particles
-    type: SNOWFLAKE
-    style: TRAIL
-    material: SNOWBALL
-    name: "<!italic><white><b>Neige</b>"
-  souls:
-    category: particles
-    type: SOUL
-    style: TRAIL
-    material: SOUL_SAND
-    name: "<!italic><#aa5500><b>Âmes</b>"
-  end_rod:
-    category: particles
-    type: END_ROD
-    style: TRAIL
-    material: END_ROD
-    name: "<!italic><white><b>Lumière End</b>"
-  smoke:
-    category: particles
-    type: LARGE_SMOKE
-    style: TRAIL
-    material: FLINT_AND_STEEL
-    name: "<!italic><gray><b>Fumée</b>"
-  ink:
-    category: particles
-    type: SQUID_INK
-    style: TRAIL
-    material: INK_SAC
-    name: "<!italic><black><b>Encre Noire</b>"
-  wax:
-    category: particles
-    type: WAX_ON
-    style: TRAIL
-    material: HONEYCOMB
-    name: "<!italic><gold><b>Étoiles de Cire</b>"
-  cherry:
-    category: particles
-    type: CHERRY_LEAVES
-    style: TRAIL
-    material: CHERRY_LEAVES
-    name: "<!italic><light_purple><b>Pétales Roses</b>"
-  sculk:
-    category: particles
-    type: SCULK_SOUL
-    style: TRAIL
-    material: SCULK_SENSOR
-    name: "<!italic><#00aaaa><b>Sculk</b>"
-  electric:
-    category: particles
-    type: ELECTRIC_SPARK
-    style: TRAIL
-    material: LIGHTNING_ROD
-    name: "<!italic><yellow><b>Électricité</b>"
-  totem:
-    category: particles
-    type: TOTEM_OF_UNDYING
-    style: TRAIL
-    material: TOTEM_OF_UNDYING
-    name: "<!italic><green><b>Résurrection</b>"
+    material: NOTE_BLOCK
+    name: "<!italic><aqua><b>Musique</b>"
 
-# ================= GADGETS (Items Fun) =================
+# === GADGETS ===
 
   grappling_hook:
     category: gadgets
-    material: CROSSBOW # Plus stylé que Canne à pêche
+    rarity: RARE
+    material: CROSSBOW
     item_material: FISHING_ROD
     name: "<!italic><green><b>Grappin Tactique</b>"
     lore:
       - "<gray>Clic droit pour s'envoler !"
   tnt_party:
     category: gadgets
+    rarity: LEGENDAIRE
     material: TNT
     item_material: TNT
     name: "<!italic><red><b>TNT Party</b>"
     lore:
       - "<gray>Boum ! (Sans danger)"
-  paintball:
-    category: gadgets
-    material: DIAMOND_HORSE_ARMOR
-    item_material: DIAMOND_HORSE_ARMOR
-    name: "<!italic><aqua><b>Fusil Paintball</b>"
-    lore:
-      - "<gray>Tire des boules de neige."
-  firework:
-    category: gadgets
-    material: FIREWORK_ROCKET
-    item_material: FIREWORK_ROCKET
-    name: "<!italic><yellow><b>Feu d'Artifice</b>"
-  pearl_ride:
-    category: gadgets
-    material: ENDER_PEARL
-    item_material: ENDER_PEARL
-    name: "<!italic><#aa00aa><b>Perle Volante</b>"
-    lore:
-      - "<gray>Chevauchez le vide !"
