@@ -6,6 +6,7 @@ import fr.heneria.cosmetics.model.Cosmetic;
 import fr.heneria.cosmetics.model.Gadget;
 import fr.heneria.cosmetics.model.Hat;
 import fr.heneria.cosmetics.model.ParticleEffect;
+import fr.heneria.cosmetics.model.Rarity;
 import me.arcaniax.hdb.api.HeadDatabaseAPI;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
@@ -59,22 +60,29 @@ public class CosmeticManager {
                 String hdbId = section.getString("hdb_id");
                 String materialName = section.getString("material");
                 Material iconMaterial = materialName != null ? Material.matchMaterial(materialName) : null;
+                String rarityStr = section.getString("rarity", "COMMUN");
+                Rarity rarity;
+                try {
+                    rarity = Rarity.valueOf(rarityStr.toUpperCase());
+                } catch (IllegalArgumentException e) {
+                    rarity = Rarity.COMMUN;
+                }
                 List<String> lore = section.getStringList("lore");
 
                 if ("hats".equalsIgnoreCase(category)) {
-                    cosmetics.put(key, new Hat(key, name, permission, hdbId, iconMaterial, lore));
+                    cosmetics.put(key, new Hat(key, name, permission, hdbId, iconMaterial, rarity, lore));
                 } else if ("particles".equalsIgnoreCase(category)) {
                     try {
                         Particle particleType = Particle.valueOf(section.getString("type"));
                         String styleStr = section.getString("style", "TRAIL");
                         ParticleEffect.Style style = ParticleEffect.Style.valueOf(styleStr);
-                        cosmetics.put(key, new ParticleEffect(key, name, permission, hdbId, iconMaterial, lore, particleType, style));
+                        cosmetics.put(key, new ParticleEffect(key, name, permission, hdbId, iconMaterial, rarity, lore, particleType, style));
                     } catch (IllegalArgumentException e) {
                         plugin.getLogger().warning("Invalid particle type or style for " + key + ": " + e.getMessage());
                     }
                 } else if ("gadgets".equalsIgnoreCase(category)) {
                     Material mat = Material.getMaterial(section.getString("item_material", "FISHING_ROD"));
-                    cosmetics.put(key, new Gadget(key, name, permission, hdbId, iconMaterial, lore, mat));
+                    cosmetics.put(key, new Gadget(key, name, permission, hdbId, iconMaterial, rarity, lore, mat));
                 }
             }
         }
