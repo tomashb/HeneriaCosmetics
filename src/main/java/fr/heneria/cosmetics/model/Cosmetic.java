@@ -1,21 +1,22 @@
 package fr.heneria.cosmetics.model;
 
-import org.bukkit.Material;
 import java.util.List;
 
 public abstract class Cosmetic {
     private final String id;
     private final String name;
     private final String permission;
-    private final Material icon;
+    private final String hdbId;
     private final List<String> lore;
+    private final String category;
 
-    public Cosmetic(String id, String name, String permission, Material icon, List<String> lore) {
+    public Cosmetic(String id, String name, String permission, String hdbId, List<String> lore, String category) {
         this.id = id;
         this.name = name;
         this.permission = permission;
-        this.icon = icon;
+        this.hdbId = hdbId;
         this.lore = lore;
+        this.category = category;
     }
 
     public String getId() {
@@ -30,11 +31,15 @@ public abstract class Cosmetic {
         return permission;
     }
 
-    public Material getIcon() {
-        return icon;
+    public String getHdbId() {
+        return hdbId;
     }
 
     public List<String> getLore() {
         return lore;
+    }
+
+    public String getCategory() {
+        return category;
     }
 }

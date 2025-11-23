@@ -1,24 +1,28 @@
 package fr.heneria.cosmetics.model;
 
-import org.bukkit.Material;
 import org.bukkit.Particle;
 import java.util.List;
 
 public class ParticleEffect extends Cosmetic {
-    private final Particle particleType;
-    private final int count;
+    public enum Style {
+        RING,
+        TRAIL
+    }
 
-    public ParticleEffect(String id, String name, String permission, Material icon, List<String> lore, Particle particleType, int count) {
-        super(id, name, permission, icon, lore);
+    private final Particle particleType;
+    private final Style style;
+
+    public ParticleEffect(String id, String name, String permission, String hdbId, List<String> lore, Particle particleType, Style style) {
+        super(id, name, permission, hdbId, lore, "particles");
         this.particleType = particleType;
-        this.count = count;
+        this.style = style;
     }
 
     public Particle getParticleType() {
         return particleType;
     }
 
-    public int getCount() {
-        return count;
+    public Style getStyle() {
+        return style;
     }
 }

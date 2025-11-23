@@ -6,6 +6,7 @@ public class ActiveCosmetic {
     private ItemStack realHelmet;
     private String currentHatId;
     private String currentParticleId;
+    private String currentGadgetId;
 
     public ActiveCosmetic() {
     }
@@ -40,5 +41,17 @@ public class ActiveCosmetic {
 
     public boolean hasParticle() {
         return currentParticleId != null;
+    }
+
+    public String getCurrentGadgetId() {
+        return currentGadgetId;
+    }
+
+    public void setCurrentGadgetId(String currentGadgetId) {
+        this.currentGadgetId = currentGadgetId;
+    }
+
+    public boolean hasGadget() {
+        return currentGadgetId != null;
     }
 }
