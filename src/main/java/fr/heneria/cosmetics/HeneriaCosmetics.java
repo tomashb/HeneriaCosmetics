@@ -32,6 +32,7 @@ public class HeneriaCosmetics extends JavaPlugin implements Listener, CommandExe
         // Register Listeners
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getPluginManager().registerEvents(new fr.heneria.cosmetics.listener.PlayerListener(this), this);
+        getServer().getPluginManager().registerEvents(new fr.heneria.cosmetics.listener.GadgetListener(this), this);
 
         getLogger().info("HeneriaCosmetics enabled!");
     }
