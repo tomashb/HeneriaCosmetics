@@ -1,0 +1,9 @@
+name: HeneriaCosmetics
+version: 1.0
+main: fr.heneria.cosmetics.HeneriaCosmetics
+api-version: 1.21
+softdepend: [HeadDatabase]
+commands:
+  cosmetics:
+    description: Ouvre le menu des cosmétiques
+    aliases: [cosmetiques]
