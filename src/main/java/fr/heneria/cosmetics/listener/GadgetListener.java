@@ -18,9 +18,19 @@ public class GadgetListener implements Listener {
 
     private final HeneriaCosmetics plugin;
     private final Random random = new Random();
+    private final java.util.Map<java.util.UUID, Long> cooldowns = new java.util.HashMap<>();
 
     public GadgetListener(HeneriaCosmetics plugin) {
         this.plugin = plugin;
+    }
+
+    @EventHandler
+    public void onEntityExplode(org.bukkit.event.entity.EntityExplodeEvent event) {
+        if (event.getEntity() instanceof TNTPrimed tnt) {
+             if (tnt.getPersistentDataContainer().has(new NamespacedKey(plugin, "gadget_tnt"), org.bukkit.persistence.PersistentDataType.BYTE)) {
+                 event.blockList().clear();
+             }
+        }
     }
 
     @EventHandler
@@ -44,8 +54,18 @@ public class GadgetListener implements Listener {
 
         Player player = event.getPlayer();
 
-        // Cooldown check? Prompt doesn't specify cooldowns but it's good practice.
-        // For simplicity I will just run the logic.
+        // Cooldown check
+        int cooldownSeconds = plugin.getCosmeticManager().getCosmeticConfig().getInt("settings.cooldown_seconds", 3);
+        long cooldownTime = cooldownSeconds * 1000L;
+        if (cooldowns.containsKey(player.getUniqueId())) {
+            long lastUse = cooldowns.get(player.getUniqueId());
+            if (System.currentTimeMillis() - lastUse < cooldownTime) {
+                String msg = plugin.getCosmeticManager().getCosmeticConfig().getString("settings.messages.cooldown");
+                if (msg != null) player.sendActionBar(net.kyori.adventure.text.minimessage.MiniMessage.miniMessage().deserialize(msg));
+                return;
+            }
+        }
+        cooldowns.put(player.getUniqueId(), System.currentTimeMillis());
 
         switch (gadgetId) {
             case "grappling_hook":
@@ -53,14 +73,17 @@ public class GadgetListener implements Listener {
                 player.setVelocity(dir.multiply(1.5));
                 player.playSound(player.getLocation(), Sound.ENTITY_FISHING_BOBBER_THROW, 1f, 1f);
                 break;
-            case "paintball_gun":
+            case "paintball": // Renamed in new config
+            case "paintball_gun": // Backwards compat or if config name varies
                 Snowball snowball = player.launchProjectile(Snowball.class);
                 snowball.setVelocity(player.getLocation().getDirection().multiply(2));
                 player.playSound(player.getLocation(), Sound.ENTITY_SNOWBALL_THROW, 1f, 1f);
                 break;
+            case "firework": // Renamed in new config
             case "firework_launcher":
                 spawnRandomFirework(player.getLocation());
                 break;
+            case "tnt_party": // Renamed in new config
             case "tnt_toss":
                 TNTPrimed tnt = player.getWorld().spawn(player.getLocation().add(0, 1, 0), TNTPrimed.class);
                 tnt.setVelocity(player.getLocation().getDirection().multiply(1));
@@ -72,6 +95,10 @@ public class GadgetListener implements Listener {
             case "magic_wand":
                 player.getWorld().spawnParticle(Particle.WITCH, player.getLocation().add(0, 1, 0), 20, 0.5, 0.5, 0.5, 0.1);
                 player.playSound(player.getLocation(), Sound.BLOCK_AMETHYST_BLOCK_CHIME, 1f, 1f);
+                break;
+            case "pearl_ride":
+                EnderPearl pearl = player.launchProjectile(EnderPearl.class);
+                pearl.addPassenger(player);
                 break;
         }
     }
