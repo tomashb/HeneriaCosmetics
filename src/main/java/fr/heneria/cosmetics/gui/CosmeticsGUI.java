@@ -65,6 +65,30 @@ public class CosmeticsGUI implements Listener {
             inv.setItem(49, item);
         }
 
+        // Stats Item
+        ConfigurationSection statsSec = manager.getCosmeticConfig().getConfigurationSection("settings.stats_item");
+        if (statsSec != null) {
+             int total = manager.getCosmetics().size();
+             int owned = 0;
+             for (Cosmetic c : manager.getCosmetics().values()) {
+                 if (c.getPermission() == null || c.getPermission().isEmpty() || player.hasPermission(c.getPermission())) {
+                     owned++;
+                 }
+             }
+             int percent = total > 0 ? (int) ((double) owned / total * 100) : 0;
+
+             List<String> lore = statsSec.getStringList("lore");
+             List<String> finalLore = new ArrayList<>();
+             for (String l : lore) {
+                 finalLore.add(l.replace("%owned%", String.valueOf(owned))
+                                .replace("%total%", String.valueOf(total))
+                                .replace("%percent%", String.valueOf(percent)));
+             }
+
+             ItemStack item = createHeadItem(statsSec.getString("hdb_id"), Material.matchMaterial(statsSec.getString("material", "BOOK")), statsSec.getString("name"), finalLore);
+             inv.setItem(statsSec.getInt("slot", 4), item);
+        }
+
         player.openInventory(inv);
     }
 
@@ -100,6 +124,9 @@ public class CosmeticsGUI implements Listener {
                 categoryCosmetics.add(c);
             }
         }
+
+        // Sort cosmetics by rarity
+        categoryCosmetics.sort(java.util.Comparator.comparingInt(c -> c.getRarity() != null ? c.getRarity().getLevel() : 0));
 
         int[] slots = {19, 20, 21, 22, 23, 24, 25, 28, 29, 30, 31, 32, 33, 34};
         int itemsPerPage = slots.length;
